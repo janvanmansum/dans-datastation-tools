@@ -132,6 +132,8 @@ dmypy.json
 .idea
 
 # keep your stuff save from accidently pushing
-/work/
+/data/
 /config.yml
 /html
+
+/setup.py

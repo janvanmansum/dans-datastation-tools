@@ -2,13 +2,19 @@ import os
 from os.path import exists
 from shutil import copyfile
 import yaml
+from pkgutil import get_data
 import logging
 
 
 def ensure_config_yml_exists(config_yml, example_config_yml):
     if not exists(config_yml):
         print("No config.yml found; copying example-config.yml to config.yml")
-        copyfile(example_config_yml, config_yml)
+        with open('config.yml', 'wb') as f:
+            example_cfg = get_data('datastation', 'example-config.yml')
+            if example_cfg is None:
+                print("WARN: cannot find example-config.yml")
+            else:
+                f.write(get_data('datastation', example_config_yml))
 
 
 def init():
@@ -19,22 +25,18 @@ def init():
     Returns:
         a dictionary with the configuration settings
     """
-    logging.basicConfig(level=logging.INFO, filename='work/utils.log',
-                        format='[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s', filemode='w',
-                        encoding='UTF-8')
+    # logging.basicConfig(level=logging.INFO, filename='data/utils.log',
+    #                     format='[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s', filemode='w',
+    #                     encoding='UTF-8')
+    #
+    # work_path = 'data'
+    # if os.path.isdir(work_path):
+    #     logging.info(msg=("Skipping dir creation, because it already exists: %", work_path))
+    # else:
+    #     logging.info(msg=("Creating work dir: %", work_path))
+    #     os.makedirs(work_path)
 
-    local_path = os.path.dirname(__file__)
-    work_path = os.path.join(local_path, '../../work')
-    if os.path.isdir(work_path):
-        logging.info(msg=("Skipping dir creation, because it already exists: %", work_path))
-    else:
-        logging.info(msg=("Creating work dir: %", work_path))
-        os.makedirs(work_path)
-
-    filepath = os.path.realpath(__file__)
-    example_config_yml = os.path.normpath(os.path.join(filepath, "../../../example-config.yml"))
-    config_yml = os.path.normpath(os.path.join(filepath, "../../../config.yml"))
-    ensure_config_yml_exists(config_yml, example_config_yml)
-    with open(config_yml, 'r') as stream:
+    ensure_config_yml_exists('config.yml', './example-config.yml')
+    with open('config.yml', 'r') as stream:
         config = yaml.safe_load(stream)
         return config
