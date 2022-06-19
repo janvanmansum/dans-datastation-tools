@@ -1,6 +1,6 @@
 dataverse:
   api_token: your-api-token-here
-  server_url: 'http://localhost:8080/'
+  server_url: 'http://localhost:8080'
 
 files:
   output_dir: data/
@@ -9,3 +9,4 @@ datacite:
   api_endpoint: ''
   username: ''
   password: ''
+

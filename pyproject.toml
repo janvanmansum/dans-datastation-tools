@@ -1,8 +1,11 @@
 [tool.poetry]
-name = "datastation"
-version = "0.1.0"
+name = "dans-datastation-tools"
+version = "0.2.0"
 description = "Command line utilities for Data Station application management"
 authors = ["DANS-KNAW"]
+packages = [
+    { include = "datastation", from = "src" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.6"
@@ -16,8 +19,8 @@ pytest = "^5.2"
 mkdocs = "==1.3.0"
 
 [build-system]
-requires = ["setuptools", "poetry-core>=1.0.0"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-retrieve-dataset-pids = "dans_datastation_tools.scripts.retrieve_dataset_pids:main"
+retrieve-dataset-pids = "datastation.scripts.retrieve_dataset_pids:main"

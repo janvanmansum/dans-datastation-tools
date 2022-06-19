@@ -36,7 +36,7 @@ def init():
     #     logging.info(msg=("Creating work dir: %", work_path))
     #     os.makedirs(work_path)
 
-    ensure_config_yml_exists('config.yml', './example-config.yml')
+    ensure_config_yml_exists('config.yml', 'example-config.yml')
     with open('config.yml', 'r') as stream:
         config = yaml.safe_load(stream)
         return config
