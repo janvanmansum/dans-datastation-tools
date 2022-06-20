@@ -10,7 +10,7 @@ The project uses [poetry] for a build system. It is recommended that you install
 virtual environment. 
 
 ```
-git clone ...
+git clone 
 cd dans-datastation-tools
 python3 -m venv venv
 source venv/bin/activate
