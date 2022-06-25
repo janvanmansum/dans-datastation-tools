@@ -134,6 +134,7 @@ dmypy.json
 # keep your stuff save from accidently pushing
 /data/
 /config.yml
+/.dans-datastation-tools.yml
 /html
 
 /setup.py

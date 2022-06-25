@@ -34,15 +34,13 @@ def modify_registration_metadata(config, pid):
 def update_datacite_record(config):
     def update_datacite_record_for_pid(pid):
         modify_registration_metadata(config, pid)
-        return False
+        return True
 
     return update_datacite_record_for_pid
 
-
 def update_datacite_records(config, pid_file):
     pids = load_pids(pid_file)
-    batch_process(pids, update_datacite_record(config), logging_dir='../work/', delay=1)
-
+    batch_process(pids, update_datacite_record(config), logging_dir='   ../work/', delay=1)
 
 def main():
     config = init()

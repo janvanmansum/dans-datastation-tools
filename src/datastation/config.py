@@ -5,22 +5,35 @@ import yaml
 from pkgutil import get_data
 import logging
 
+configuration_file = '.dans-datastation-tools.yml'
+example_configuration_file = 'example-dans-datastation-tools.yml'
+configuration_file_locations = [configuration_file, os.path.expanduser('~/' + configuration_file)]
 
-def ensure_config_yml_exists(config_yml, example_config_yml):
-    if not exists(config_yml):
-        print("No config.yml found; copying example-config.yml to config.yml")
-        with open('config.yml', 'wb') as f:
-            example_cfg = get_data('datastation', 'example-config.yml')
+
+def ensure_configuration_file_exists():
+    config = find_config_file()
+    if config is None:
+        print("No %s found; instantiating in current directory" % configuration_file)
+        with open(configuration_file, 'wb') as f:
+            example_cfg = get_data('datastation', example_configuration_file)
             if example_cfg is None:
-                print("WARN: cannot find example-config.yml")
+                print("WARN: cannot find example-dans-datastation-tools.yml")
             else:
-                f.write(get_data('datastation', example_config_yml))
+                f.write(example_cfg)
+
+
+def find_config_file():
+    return next(filter(lambda p: exists(p), configuration_file_locations), None)
 
 
 def init():
     """
-    Initialization function to run by each script. It creates the work directory if it doesn't exist yet, and it reads
-    config.yml. If `config.yml` does not exist yet, then it is first created from `example-config.yml`.
+    Initialization function to run by each script. It reads `.dans-datastation-tools.yml`, searching the current
+    working directory and then the user's home directory. If `.dans-datastation-tools.yml` does not exist yet,
+    then it is first instantiated in the current working directory, from `example-dans-datastation-tools.yml`.
+
+    This function then proceeds to read the configuration into a dictionary, initialize the logging framework with the
+    settings found under the `logging` key and return the complete dictionary to the caller.
 
     Returns:
         a dictionary with the configuration settings
@@ -29,14 +42,9 @@ def init():
     #                     format='[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s', filemode='w',
     #                     encoding='UTF-8')
     #
-    # work_path = 'data'
-    # if os.path.isdir(work_path):
-    #     logging.info(msg=("Skipping dir creation, because it already exists: %", work_path))
-    # else:
-    #     logging.info(msg=("Creating work dir: %", work_path))
-    #     os.makedirs(work_path)
 
-    ensure_config_yml_exists('config.yml', 'example-config.yml')
-    with open('config.yml', 'r') as stream:
+    ensure_configuration_file_exists()
+    with open(find_config_file(), 'r') as stream:
         config = yaml.safe_load(stream)
+        # TODO: initialize logging
         return config
