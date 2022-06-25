@@ -5,3 +5,6 @@ dans-datastation-tools
 Command line utilities for Data Station application management.
 
 For documentation see: https://dans-knaw.github.io/dans-datastation-tools
+
+Releases on PyPI: https://pypi.org/project/dans-datastation-tools/
+
