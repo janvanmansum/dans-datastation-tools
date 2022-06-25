@@ -3,6 +3,7 @@ from os.path import exists
 from shutil import copyfile
 import yaml
 from pkgutil import get_data
+from logging import config as logconfig
 import logging
 
 configuration_file = '.dans-datastation-tools.yml'
@@ -38,13 +39,9 @@ def init():
     Returns:
         a dictionary with the configuration settings
     """
-    # logging.basicConfig(level=logging.INFO, filename='data/utils.log',
-    #                     format='[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s', filemode='w',
-    #                     encoding='UTF-8')
-    #
-
     ensure_configuration_file_exists()
     with open(find_config_file(), 'r') as stream:
         config = yaml.safe_load(stream)
-        # TODO: initialize logging
+        logconfig.dictConfig(config['logging'])
+        logging.debug("Initialized logging")
         return config

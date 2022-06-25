@@ -29,7 +29,6 @@ def unlock_dataset_action(server_url, api_token, pid):
 
 
 def unlock_dataset_command(config, pids_file):
-    # look for inputfile in configured OUTPUT_DIR
     full_name = os.path.join(config['files']['output_dir'], pids_file)
     pids = load_pids(full_name)
 
@@ -41,7 +40,7 @@ def unlock_dataset_command(config, pids_file):
 
 def main():
     config = init()
-    parser = argparse.ArgumentParser(description='Unlock datasets (if locked) with the pids in the given inputfile')
+    parser = argparse.ArgumentParser(description='Unlock datasets (if locked) with the pids in the given input file')
     parser.add_argument('-p', '--pids-file', default='dataset_pids.txt', help='The input file with the dataset pids')
     args = parser.parse_args()
     unlock_dataset_command(config, args.pids_file)

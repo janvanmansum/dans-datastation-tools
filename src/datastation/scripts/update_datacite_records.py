@@ -1,56 +1,54 @@
 import argparse
 
-import requests
-from requests.auth import HTTPBasicAuth
+import requests, logging
 
 from datastation.batch_processing import batch_process
 from datastation.config import init
 from datastation.ds_pidsfile import load_pids
 
 
-def send_metadata_to_mds(config, doi, metadata):
-    url = '%s/metadata/%s' % (config['datacite']['mds_endpoint'], doi)
-    response = requests.put(
-        url=url,
-        auth=HTTPBasicAuth(config['datacite']['username'], config['datacite']['password']),
-        headers={
-            'Content-Type': 'application/xml;charset=UTF-8'
-        },
-        data=metadata)
-
-
-def modify_registration_metadata(config, pid):
+def modify_registration_metadata(dataverse_url, dataverse_api_token, pid):
+    logging.debug("Calling modifyRegistrationMetadata for {}".format(pid))
     url = '%s/api/datasets/:persistentId/modifyRegistrationMetadata?persistentId=%s' % (
-        config['dataverse']['server_url'], pid)
+        dataverse_url, pid)
     response = requests.post(
         url=url,
         headers={
-            'X-Dataverse-key': config['dataverse']['api_token']
+            'X-Dataverse-key': dataverse_api_token
         }
     )
-    print(response.text)
+    logging.debug("Dataverse response: {}".format(response.text))
 
 
-def update_datacite_record(config):
+def update_datacite_record(dataverse_url, dataverse_api_token):
     def update_datacite_record_for_pid(pid):
-        modify_registration_metadata(config, pid)
+        modify_registration_metadata(dataverse_url, dataverse_api_token, pid)
         return True
 
     return update_datacite_record_for_pid
 
-def update_datacite_records(config, pid_file):
+
+def update_datacite_records(dataverse_url, dataverse_api_token, pid_file, out_file, delay):
     pids = load_pids(pid_file)
-    batch_process(pids, update_datacite_record(config), logging_dir='   ../work/', delay=1)
+    batch_process(pids, update_datacite_record(dataverse_url, dataverse_api_token), out_file, delay)
+
 
 def main():
     config = init()
 
     parser = argparse.ArgumentParser(
-        description='Downloads the DataCite metadata from Dataverse for a list of datasets and updates DataCite with '
-                    'those records')
+        description='Calls the Dataverse modifyRegistrationMetadata for the PIDs in the input file, with a delay'
+                    + 'between calls')
     parser.add_argument('dataset_pids', help='Newline separated file with dataset PIDs')
+    parser.add_argument('processed_pids', help="Datasets that were successfully processed",
+                        default='datacite-processed.txt')
+    parser.add_argument('delay', help='Delay between calls', default=0.25)
     args = parser.parse_args()
-    update_datacite_records(config, args.dataset_pids)
+
+    dataverse_url = config['dataverse']['server_url']
+    dataverse_api_token = config['dataverse']['api_token']
+
+    update_datacite_records(dataverse_url, dataverse_api_token, args.dataset_pids, args.processed_pids, args.delay)
 
 
 if __name__ == '__main__':

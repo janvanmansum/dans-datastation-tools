@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dans-datastation-tools"
-version = "0.2.2"
+version = "0.3.0"
 description = "Command line utilities for Data Station application management"
 authors = ["DANS-KNAW"]
 packages = [
@@ -23,14 +23,15 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-convert-dataset-metadatafiles = "datastation.scripts.convert_dataset_metadatafiles:main"
-delete-role-assignments = "datastation.scripts.delete_roleassignments:main"
-delete-drafts = "datastation.scripts.delete_datasets:main"
-oai-harvest = "datastation.scripts.oai_harvest:main"
-publish-datasets = "datastation.scripts.publish_datasets:main"
-reindex-datasets = "datastation.scripts.reindex_datasets:main"
-replace-metadata-field-values = "datastation.scripts.replace_metadata_field_values:main"
-retrieve-dataset-metadata = "datastation.scripts.retrieve_dataset_metadata:main"
-retrieve-dataset-pids = "datastation.scripts.retrieve_dataset_pids:main"
-unlock-datasets = "datastation.scripts.unlock_datasets:main"
+# TODO: figure out which of the scripts to keep and how to name them in a consistent way
+#convert-dataset-metadatafiles = "datastation.scripts.convert_dataset_metadatafiles:main"
+#delete-role-assignments = "datastation.scripts.delete_role_assignments:main"
+#delete-drafts = "datastation.scripts.delete_datasets:main"
+#oai-harvest = "datastation.scripts.oai_harvest:main"
+#publish-datasets = "datastation.scripts.publish_datasets:main"
+#reindex-datasets = "datastation.scripts.reindex_datasets:main"
+#replace-metadata-field-values = "datastation.scripts.replace_metadata_field_values:main"
+#retrieve-dataset-metadata = "datastation.scripts.retrieve_dataset_metadata:main"
+#retrieve-dataset-pids = "datastation.scripts.retrieve_dataset_pids:main"
+#unlock-datasets = "datastation.scripts.unlock_datasets:main"
 update-datacite-records = "datastation.scripts.update_datacite_records:main"

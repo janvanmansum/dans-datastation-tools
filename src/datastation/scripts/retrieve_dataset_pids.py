@@ -7,8 +7,7 @@ from datastation.dv_search import get_dataset_pids_from_search
 
 
 def retrieve_dataset_pids_command(config, dataverse_alias, output_filename):
-    logging.info(
-        msg=("Retrieving dataset PIDs from URL %, dataverse %", config['dataverse']['server_url'], dataverse_alias))
+    logging.info("Retrieving dataset PIDs from URL {}, dataverse {}".format(config['dataverse']['server_url'], dataverse_alias))
     pids = get_dataset_pids_from_search(config['dataverse']['server_url'], dataverse_alias)
     # store in work dir, for further processing and or inspection
     store_pids(pids, config['files']['output_dir'], output_filename)

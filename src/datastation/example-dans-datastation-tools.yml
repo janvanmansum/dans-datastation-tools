@@ -2,11 +2,18 @@ dataverse:
   api_token: your-api-token-here
   server_url: 'http://localhost:8080'
 
-files:
-  output_dir: data/
-
-datacite:
-  api_endpoint: ''
-  username: ''
-  password: ''
-
+logging:
+  version: 1
+  root:
+    handlers:
+      - console
+    level: DEBUG
+  handlers:
+    console:
+      formatter: std_out
+      class: logging.StreamHandler
+      level: DEBUG
+  formatters:
+    std_out:
+      format: "%(asctime)s : %(levelname)s : %(funcName)s : %(message)s"
+      datefmt: "%Y-%m-%d %I:%M:%S"
