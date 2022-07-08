@@ -8,9 +8,11 @@ SYNOPSIS
 
 ```bash
 pip3 install dans-datastation-tools
-ds-help # list commands
-ds-update-datacite-record '10.17026/some-suffix'
-# etc
+ds-dataset-list-role-assignements
+ds-datacite-update-record < dataset-pids.txt    # Update list of datasets at DataCite
+ds-datacite-update-record 10.17026/some-suffix # Update one dataset at DataCite
+ds-dataset-get-metadata 
+
 
 ```
 
@@ -37,7 +39,7 @@ INSTALLATION & CONFIGURATION
   ```bash
   pip3 install --user dans-datastation-tools
   ```
-  You may have to add the directory where `pip3` installs the command on the `PATH` manually.
+  You may have to add the directory where `pip3` installs the command to the `PATH` manually.
 
 ### Configuration
 
