@@ -159,7 +159,7 @@ def process_dataset(file_storage_root, doi, storage_identifier, current_checksum
         if not is_provenance_xml_file(provenance_file):
             sys.exit("FATAL ERROR: {} for doi {} is not a provenance xml file".format(provenance_file, doi))
 
-        if validate(provenance_path, file_storage_root + '/provenance.xsd'):
+        if validate(provenance_path, 'https://easy.dans.knaw.nl/schemas/bag/metadata/prov/provenance.xsd'):
             logging.info("{} is already valid for doi {}".format(storage_identifier, doi))
             add_result(output_file, doi=doi, storage_identifier=storage_identifier,
                        old_checksum=current_checksum, dvobject_id=dvobject_id, status="OK")
@@ -167,7 +167,7 @@ def process_dataset(file_storage_root, doi, storage_identifier, current_checksum
 
         new_provenance_file = make_new_provenance_file(provenance_path, dry_run_file)
 
-        if not validate(new_provenance_file, file_storage_root + '/provenance.xsd'):
+        if not validate(new_provenance_file, 'https://easy.dans.knaw.nl/schemas/bag/metadata/prov/provenance.xsd'):
             add_result(output_file, doi=doi, storage_identifier=storage_identifier,
                        old_checksum=current_checksum, dvobject_id=dvobject_id, status="FAILED")
             sys.exit("FATAL ERROR: new provenance file not valid for {} at {}".format(doi, new_provenance_file))
