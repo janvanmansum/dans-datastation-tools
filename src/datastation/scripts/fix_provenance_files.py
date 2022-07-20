@@ -11,6 +11,8 @@ import shutil
 import sys
 from datastation.config import init
 
+PROV_PROVENANCE_XSD = 'http://easy.dans.knaw.nl/schemas/bag/metadata/prov/provenance.xsd'
+
 provenance_element = 'provenance ' \
                      'xmlns:prov="http://easy.dans.knaw.nl/schemas/bag/metadata/prov/" ' \
                      'xsi:schemaLocation="http://easy.dans.knaw.nl/schemas/bag/metadata/prov/ https://easy.dans.knaw.nl/schemas/bag/metadata/prov/provenance.xsd" ' \
@@ -28,11 +30,14 @@ def validate(xml_path: str, xsd_path: str) -> bool:
     xmlschema = etree.XMLSchema(xmlschema_doc)
     try:
         xml_doc = etree.parse(xml_path)
-        result = xmlschema.validate(xml_doc)
-        return result
-    except etree.XMLSyntaxError:
+        xmlschema.assertValid(xml_doc)
+        return True
+    except etree.XMLSyntaxError as e:
+        logging.error(e)
         return False
-
+    except etree.DocumentInvalid as e:
+        logging.error(e)
+        return False
 
 def replace_provenance_tag(infile):
     old_provenance_tag = "<([a-zA-Z0-9_:]*)provenance .*>"
@@ -159,7 +164,7 @@ def process_dataset(file_storage_root, doi, storage_identifier, current_checksum
         if not is_provenance_xml_file(provenance_file):
             sys.exit("FATAL ERROR: {} for doi {} is not a provenance xml file".format(provenance_file, doi))
 
-        if validate(provenance_path, 'http://easy.dans.knaw.nl/schemas/bag/metadata/prov/provenance.xsd'):
+        if validate(provenance_path, PROV_PROVENANCE_XSD):
             logging.info("{} is already valid for doi {}".format(storage_identifier, doi))
             add_result(output_file, doi=doi, storage_identifier=storage_identifier,
                        old_checksum=current_checksum, dvobject_id=dvobject_id, status="OK")
@@ -167,7 +172,7 @@ def process_dataset(file_storage_root, doi, storage_identifier, current_checksum
 
         new_provenance_file = make_new_provenance_file(provenance_path, dry_run_file)
 
-        if not validate(new_provenance_file, 'http://easy.dans.knaw.nl/schemas/bag/metadata/prov/provenance.xsd'):
+        if not validate(new_provenance_file, PROV_PROVENANCE_XSD):
             add_result(output_file, doi=doi, storage_identifier=storage_identifier,
                        old_checksum=current_checksum, dvobject_id=dvobject_id, status="FAILED")
             sys.exit("FATAL ERROR: new provenance file not valid for {} at {}".format(doi, new_provenance_file))
