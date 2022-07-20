@@ -13,7 +13,6 @@ from datastation.config import init
 
 provenance_element = 'provenance ' \
                      'xmlns:prov="http://easy.dans.knaw.nl/schemas/bag/metadata/prov/" ' \
-                     'xsi:schemaLocation="http://easy.dans.knaw.nl/schemas/bag/metadata/prov/ https://easy.dans.knaw.nl/schemas/bag/metadata/prov/provenance.xsd" ' \
                      'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' \
                      'xmlns:id-type="http://easy.dans.knaw.nl/schemas/vocab/identifier-type/" ' \
                      'xmlns:dcx-gml="http://easy.dans.knaw.nl/schemas/dcx/gml/" ' \
