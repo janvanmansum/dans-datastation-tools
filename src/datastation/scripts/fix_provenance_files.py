@@ -243,15 +243,15 @@ def main():
                         default='fix-provenance-output.csv')
     parser.add_argument('-r', '--dryrun', dest='dryrun', help="only logs the actions, nothing is executed",
                         action='store_true')
+    parser.add_argument('-t', '--temp-file-for-dryrun', dest='dryrun_tempfile', default='dry-run-provenance-file.xml', help='store new provenance.xml here when doing a dry run')
     parser.add_argument('-i', '--input-file', dest='input_file',
                         help="csv file with columns: doi, storage_identifier, current_sha1_checksum and dvobject_id")
     args = parser.parse_args()
 
     dvndb_conn = None
     try:
-        dry_run_provenance_file_path = None
+        dry_run_provenance_file_path = args.dryrun_tempfile
         if args.dryrun:
-            dry_run_provenance_file_path = "dry-run-provenance-file.xml"
             logging.info("--- DRY RUN, using {} for the temporary provenance file ---"
                          .format(dry_run_provenance_file_path))
         else:
