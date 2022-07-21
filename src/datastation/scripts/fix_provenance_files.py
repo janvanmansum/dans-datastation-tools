@@ -18,8 +18,9 @@ provenance_element = 'provenance ' \
                      'xmlns:id-type="http://easy.dans.knaw.nl/schemas/vocab/identifier-type/" ' \
                      'xmlns:dcx-gml="http://easy.dans.knaw.nl/schemas/dcx/gml/" ' \
                      'xmlns:dcx-dai="http://easy.dans.knaw.nl/schemas/dcx/dai/" ' \
-                     'xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/" ' \
-                     'xmlns:dct="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/" ' \
+                     'xmlns:dcterms="http://purl.org/dc/terms/" ' \
+                     'xmlns:dc="http://purl.org/dc/elements/1.1/" ' \
+                     'xmlns:dct="http://purl.org/dc/terms/" ' \
                      'xmlns:abr="http://www.den.nl/standaard/166/Archeologisch-Basisregister/" ' \
                      'xmlns:ddm="http://easy.dans.knaw.nl/schemas/md/ddm/"'
 
