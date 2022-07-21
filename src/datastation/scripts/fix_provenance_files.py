@@ -31,16 +31,16 @@ provenance_xmlschema = etree.XMLSchema(provenance_schema_doc)
 def validate(xml_path: str) -> bool:
     try:
         xml_doc = etree.parse(xml_path)
-        # provenance_xmlschema.assertValid(xml_doc)
+        provenance_xmlschema.assertValid(xml_doc)
         return True
     except etree.XMLSyntaxError as e:
         # info instead of error because we expect the old-provenance to have syntax errors
         logging.info(e)
         return False
-    # except etree.DocumentInvalid as e:
-    #     # info instead of error because we expect the old-provenance to be invalid
-    #     logging.info(e)
-    #     return False
+    except etree.DocumentInvalid as e:
+        # info instead of error because we expect the old-provenance to be invalid
+        logging.info(e)
+        return False
 
 
 def replace_provenance_tag(infile):
@@ -180,7 +180,10 @@ def process_dataset(file_storage_root, doi, storage_identifier, current_checksum
         if not validate(new_provenance_file):
             add_result(output_file, doi=doi, storage_identifier=storage_identifier,
                        old_checksum=current_checksum, dvobject_id=dvobject_id, status="FAILED")
-            sys.exit("FATAL ERROR: new provenance file not valid for {} at {}".format(doi, new_provenance_file))
+            if dry_run_file:
+                logging.error("FATAL ERROR: new provenance file not valid for {} at {}. Continuing DRY RUN".format(doi, new_provenance_file))
+            else:
+                sys.exit("FATAL ERROR: new provenance file not valid for {} at {}".format(doi, new_provenance_file))
 
         new_checksum = calculate_checksum(new_provenance_file, dry_run_file)
         replace_old_with_new_provenance_file(provenance_path, new_provenance_file, dry_run_file)
