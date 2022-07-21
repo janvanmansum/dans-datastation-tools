@@ -259,7 +259,7 @@ def main():
         else:
             if not (args.dvndb_password and args.dvndb_user):
                 sys.exit("please provide dvndb user and password when not in dry-run mode")
-            dvndb_conn = connect_to_database(args.dvndb_user, args.dvndb_passwd)
+            dvndb_conn = connect_to_database(args.dvndb_user, args.dvndb_password)
 
         with open(args.output_csv, "w") as output_csv:
             logging.info("writing to " + args.output_csv)
