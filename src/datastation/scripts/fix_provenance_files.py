@@ -31,16 +31,16 @@ provenance_xmlschema = etree.XMLSchema(provenance_schema_doc)
 def validate(xml_path: str) -> bool:
     try:
         xml_doc = etree.parse(xml_path)
-        provenance_xmlschema.assertValid(xml_doc)
+        # provenance_xmlschema.assertValid(xml_doc)
         return True
     except etree.XMLSyntaxError as e:
         # info instead of error because we expect the old-provenance to have syntax errors
         logging.info(e)
         return False
-    except etree.DocumentInvalid as e:
-        # info instead of error because we expect the old-provenance to be invalid
-        logging.info(e)
-        return False
+    # except etree.DocumentInvalid as e:
+    #     # info instead of error because we expect the old-provenance to be invalid
+    #     logging.info(e)
+    #     return False
 
 
 def replace_provenance_tag(infile):
