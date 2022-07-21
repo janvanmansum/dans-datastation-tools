@@ -1,6 +1,7 @@
 dataverse:
   api_token: your-api-token-here
   server_url: 'http://localhost:8080'
+  files_root: your-files-root-here
 
 logging:
   version: 1

@@ -4,7 +4,7 @@ import hashlib
 import logging
 from lxml import etree
 import os.path
-import psycopg2
+import psycopg
 import re
 import requests
 import shutil
@@ -135,19 +135,20 @@ def replace_old_with_new_provenance_file(provenance_path, new_provenance_file, d
 
 def update_dvndb_record(dry_run_temp_file, provenance_path, dvndb, output_file, doi, storage_identifier, old_checksum,
                         new_checksum, dvobject_id):
-    update_statement = "update datafile set checksumvalue = '{}' where id = {} and checksumvalue='{}'"\
+    update_statement = "update datafile set checksumvalue = '{}' where id = {} and checksumvalue='{}'" \
         .format(new_checksum, dvobject_id, old_checksum)
     logging.info(update_statement)
     if not dry_run_temp_file:
-        try:
-            dvndb_cursor = dvndb.cursor()
-            dvndb_cursor.execute(update_statement)
-        except psycopg2.DatabaseError as error:
-            logging.error(error)
-            add_result(output_file, doi=doi, storage_identifier=storage_identifier, old_checksum=old_checksum,
-                       new_checksum=new_checksum, dvobject_id=dvobject_id, status="FAILED")
-            restore_old_provenance_file(provenance_path, dry_run_temp_file)
-            sys.exit("FATAL ERROR: problem updating dvndb record for {} and file {}".format(doi, dvobject_id))
+        with dvndb.cursor() as dvndb_cursor:
+            try:
+                dvndb_cursor.execute(update_statement)
+                dvndb.commit()
+            except psycopg.DatabaseError as error:
+                logging.error(error)
+                add_result(output_file, doi=doi, storage_identifier=storage_identifier, old_checksum=old_checksum,
+                           new_checksum=new_checksum, dvobject_id=dvobject_id, status="FAILED")
+                restore_old_provenance_file(provenance_path, dry_run_temp_file)
+                sys.exit("FATAL ERROR: problem updating dvndb record for {} and file {}".format(doi, dvobject_id))
 
 
 def delete_old_provenance_file(provenance_path, dry_run_temp_file):
@@ -219,11 +220,8 @@ def is_provenance_xml_file(provenance_file):
 
 
 def connect_to_database(user: str, password: str):
-    return psycopg2.connect(
-        host="localhost",
-        database="dvndb",
-        user=user,
-        password=password)
+    return psycopg.connect(
+        "host={} dbname={} user={} password={}".format('localhost', 'dvndb', user, password))
 
 
 def main():
@@ -270,13 +268,13 @@ def main():
                 with open(args.input_file, "r") as input_file_handler:
                     csv_reader = csv.DictReader(input_file_handler, delimiter=',')
                     for row in csv_reader:
-                            process_dataset(file_storage_root=config['dataverse']['files_root'], doi=row["doi"],
-                                            storage_identifier=row["storage_identifier"],
-                                            current_checksum=row["current_sha1_checksum"],
-                                            dvobject_id=row["dvobject_id"],
-                                            dvndb=dvndb_conn, dv_server_url=config['dataverse']['server_url'],
-                                            dv_api_token=config['dataverse']['api_token'],
-                                            output_file=output_csv, dry_run_file=dry_run_provenance_file_path)
+                        process_dataset(file_storage_root=config['dataverse']['files_root'], doi=row["doi"],
+                                        storage_identifier=row["storage_identifier"],
+                                        current_checksum=row["current_sha1_checksum"],
+                                        dvobject_id=row["dvobject_id"],
+                                        dvndb=dvndb_conn, dv_server_url=config['dataverse']['server_url'],
+                                        dv_api_token=config['dataverse']['api_token'],
+                                        output_file=output_csv, dry_run_file=dry_run_provenance_file_path)
             else:
                 process_dataset(file_storage_root=config['dataverse']['files_root'], doi=args.doi,
                                 storage_identifier=args.storage_identifier,
@@ -288,7 +286,7 @@ def main():
         output_csv.close()
         if not args.dryrun:
             dvndb_conn.close()
-    except psycopg2.DatabaseError as error:
+    except psycopg.DatabaseError as error:
         logging.error(error)
     finally:
         if dvndb_conn is not None:
