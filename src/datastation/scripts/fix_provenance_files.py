@@ -260,6 +260,7 @@ def main():
             logging.info("--- DRY RUN, using {} for the temporary provenance file ---"
                          .format(dry_run_provenance_file_path))
         else:
+            dry_run_provenance_file_path = None
             if not (args.dvndb_password and args.dvndb_user):
                 sys.exit("please provide dvndb user and password when not in dry-run mode")
             dvndb_conn = connect_to_database(args.dvndb_user, args.dvndb_password)
