@@ -77,7 +77,7 @@ Coding style
 
 * Except for input from configured APIs such as Dataverse and DataCite, prefer reading input from:
     1. The command line (for simple values)
-    2. The standard input (for lists o)
+    2. The standard input (for longer inputs)
 * Write output to the standard output
 * Write status messages ("OK", "Oops", etc) for the end user to the standard error
 * Write all other information to the logs (at an appropriate level)
