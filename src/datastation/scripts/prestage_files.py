@@ -1,4 +1,5 @@
 import argparse
+import logging
 import os.path
 import sys
 
@@ -21,12 +22,19 @@ def main():
         print('File or directory not found: {}'.format(file_or_dir), file=sys.stderr)
         exit(1)
 
+    if args.doi.startswith('doi:'):
+        logging.info("Removing 'doi:' prefix from DOI")
+        doi = args.doi[4:]
+    else:
+        doi = args.doi
+
     files_root = config['dataverse']['files_root']
-    ensure_doi_directory_exists(files_root, args.doi)
+    ensure_doi_directory_exists(files_root, doi)
+
     if os.path.isfile(file_or_dir):
-        prestage_file(files_root, args.doi, file_or_dir, new_file_json_data_creator())
+        prestage_file(files_root, doi, file_or_dir, new_file_json_data_creator())
     elif os.path.isdir(file_or_dir):
-        prestage_files(files_root, args.doi, file_or_dir, new_file_json_data_creator(file_or_dir))
+        prestage_files(files_root, doi, file_or_dir, new_file_json_data_creator(file_or_dir))
 
 
 if __name__ == '__main__':
