@@ -1,5 +1,5 @@
 import argparse
-import os
+import logging
 import json
 
 from datastation.batch_processing import batch_process
@@ -12,38 +12,35 @@ from datastation.dv_api import get_dataset_locks, delete_dataset_locks
 def unlock_dataset_action(server_url, api_token, pid):
     deleted_locks = False
     resp_data = get_dataset_locks(server_url, pid)
-    # print(json.dumps(resp_data, indent=2))
     if len(resp_data) == 0:
-        print("No locks")
-        print("Leave as-is")
+        logging.debug("{} - No locks found, leave as-is".format(pid))
     else:
-        print("Found locks")
-        print(json.dumps(resp_data, indent=2))
-        # delete
-        print("Try deleting the locks")
+        logging.info("{} - Found locks".format(pid))
+        logging.debug(json.dumps(resp_data, indent=2))
+        logging.debug("{} - Try deleting the locks".format(pid))
         delete_dataset_locks(server_url, api_token, pid)
-        print("Done")
         deleted_locks = True
 
     return deleted_locks
 
 
-def unlock_dataset_command(config, pids_file):
-    full_name = os.path.join(config['files']['output_dir'], pids_file)
-    pids = load_pids(full_name)
-
+def unlock_dataset_command(server_url, api_token, delay, pids_file):
     # could be fast, but depends on number of files inside the dataset
-    batch_process(pids,
-                  lambda pid: unlock_dataset_action(config['dataverse']['server_url'], config['dataverse']['api_token'],
-                                                    pid), config['files']['output_dir'], delay=1.5)
+    batch_process(load_pids(pids_file),
+                  lambda pid: unlock_dataset_action(server_url, api_token, pid), delay)
 
 
 def main():
     config = init()
     parser = argparse.ArgumentParser(description='Unlock datasets (if locked) with the pids in the given input file')
-    parser.add_argument('-p', '--pids-file', default='dataset_pids.txt', help='The input file with the dataset pids')
+    parser.add_argument('-d', '--datasets', dest='pids_file', help='The input file with the dataset pids')
+    parser.add_argument('--delay', default=1.5, help="Delay in seconds")
     args = parser.parse_args()
-    unlock_dataset_command(config, args.pids_file)
+
+    server_url = config['dataverse']['server_url']
+    api_token = config['dataverse']['api_token']
+
+    unlock_dataset_command(server_url, api_token, args.delay, args.pids_file)
 
 
 if __name__ == '__main__':

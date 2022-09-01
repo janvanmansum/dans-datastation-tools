@@ -83,12 +83,17 @@ def get_dataset_metadata(server_url, api_token, pid):
 # note that the dataset will become a draft if it was not already
 def replace_dataset_metadatafield(server_url, api_token, pid, field):
     headers = {'X-Dataverse-key': api_token}
-    dv_resp = requests.put(
-        server_url + '/api/datasets/:persistentId/editMetadata?persistentId=' + pid + '&replace=true',
-        data=json.dumps(field, ensure_ascii=False),
-        headers=headers)
-    dv_resp.raise_for_status()
-
+    try:
+        dv_resp = requests.put(
+            server_url + '/api/datasets/:persistentId/editMetadata?persistentId=' + pid + '&replace=true',
+            data=json.dumps(field, ensure_ascii=False),
+            headers=headers)
+        dv_resp.raise_for_status()
+    except requests.exceptions.RequestException as re:
+        print("RequestException: ", re)
+        raise
+    resp_data = dv_resp.json()['data']
+    return resp_data
 
 def get_dataset_roleassigments(server_url, api_token, pid):
     headers = {'X-Dataverse-key': api_token}
@@ -110,6 +115,16 @@ def delete_dataset_role_assignment(server_url, api_token, pid, assignment_id):
     dv_resp = requests.delete(server_url + '/api/datasets/:persistentId/assignments/' + str(assignment_id)
                               + '?persistentId=' + pid,
                               headers=headers)
+    dv_resp.raise_for_status()
+
+
+def add_dataset_role_assignment(server_url, api_token, pid, assignment):
+    headers = {'X-Dataverse-key': api_token, 'Content-Type': 'application/json'}
+    params = {'persistentId': pid}
+    dv_resp = requests.post(server_url + '/api/datasets/:persistentId/assignments/',
+                            headers=headers,
+                            data=json.dumps(assignment, ensure_ascii=False),
+                            params=params)
     dv_resp.raise_for_status()
 
 
