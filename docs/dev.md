@@ -24,8 +24,7 @@ This will install the project and its dependencies in the Poetry virtual environ
 
 If your MacOS Xcode tools are out of date, you may have to reinstall them. Otherwise the installation of the dependency
 `lxml` will fail, complaining that `clang` cannot be executed. This happens on MacOS Monterey when `clang` is at version
-
-11. MacOS will, however, tell you that XCode is up-to-date when you try to upgrade.
+11\. MacOS will, however, tell you that XCode is up-to-date when you try to upgrade.
 
 To fix this:
 
