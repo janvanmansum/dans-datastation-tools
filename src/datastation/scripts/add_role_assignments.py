@@ -50,7 +50,7 @@ def main():
     parser = argparse.ArgumentParser(description='Add role assignment to specified datasets')
     parser.add_argument('-d', '--datasets', dest='pid_file', help='The input file with the dataset pids')
     parser.add_argument('--dry-run', dest='dry_run', help="only logs the actions, nothing is executed", action='store_true')
-    parser.add_argument('-a', "--role_assignment", help="Role assignee and alias (example: @dataverseAdmin=contributor)")
+    parser.add_argument('-a', "--role-assignment", help="Role assignee and alias (example: @dataverseAdmin=contributor)")
     parser.add_argument('-r', '--report', required=True, dest='output_file',
                         help="Destination of the output report file, '-' sends it to stdout")
     args = parser.parse_args()
