@@ -52,7 +52,7 @@ def destroy_placeholder_dataset(server_url, api_token, pid, description_text_pat
     if blocker:
         logging.warning("BLOCKERS FOUND, NOT PERFORMING DESTROY FOR {}".format(pid))
     elif dry_run:
-        logging.info("--dry-run option specified. Not performing destroy")
+        logging.info("--dry-run option specified. Not performing destroy for {}".format(pid))
     else:
         logging.info("Destroying {}".format(pid))
         destroy_dataset(server_url, api_token, pid)
@@ -66,8 +66,9 @@ def main():
 
     parser = argparse.ArgumentParser(
         description='Destroy metadata-only placeholders for datasets that have not been migrated yet')
-    parser.add_argument('-p', '--pid', dest='pid', help='Pid of a single placeholder dataset to destroy')
-    parser.add_argument('-d', '--datasets', dest='pid_file', help='The input file with the dataset pids')
+    pid_or_file = parser.add_mutually_exclusive_group()
+    pid_or_file.add_argument('-p', '--pid', dest='pid', help='Pid of a single placeholder dataset to destroy')
+    pid_or_file.add_argument('-d', '--datasets', dest='pid_file', help='The input file with the dataset pids')
     parser.add_argument('--dry-run', dest='dry_run', help="only logs the actions, nothing is executed",
                         action='store_true')
 
