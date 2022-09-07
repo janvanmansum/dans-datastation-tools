@@ -21,33 +21,38 @@ def has_directoryLabel_different_from(file_metadata, dir_label):
 
 
 def destroy_placeholder_dataset(server_url, api_token, pid, description_text_pattern, dry_run):
-    dataset_metadata = get_dataset_metadata(server_url, api_token, pid)
-    dsDescription = next(
-        filter(lambda m: m['typeName'] == 'dsDescription', dataset_metadata['metadataBlocks']['citation']['fields']))
-    descriptions = dsDescription['value']
     blocker = False
+    try:
+        dataset_metadata = get_dataset_metadata(server_url, api_token, pid)
+        dsDescription = next(
+            filter(lambda m: m['typeName'] == 'dsDescription', dataset_metadata['metadataBlocks']['citation']['fields']))
+        descriptions = dsDescription['value']
 
-    if len(list(filter(description_object_matches(description_text_pattern), descriptions))) == 0:
+        if len(list(filter(description_object_matches(description_text_pattern), descriptions))) == 0:
+            blocker = True
+            logging.warning("No description found matching pattern '{}'".format(description_text_pattern))
+        else:
+            logging.debug("Description with text pattern found: OK")
+
+        files = dataset_metadata['files']
+
+        if len(files) > 4:
+            blocker = True
+            logging.warning("More than 4 files found: {}".format(files))
+        else:
+            logging.debug("Found {} files <= 4: OK".format(len(files)))
+
+        non_easy_migration_files = list(filter(lambda m: has_directoryLabel_different_from(m, 'easy-migration'), files))
+
+        if len(non_easy_migration_files) > 0:
+            blocker = True
+            logging.warning("Files other than 'easy-migration' found: {}".format(non_easy_migration_files))
+        else:
+            logging.debug("Only found easy-migration files: OK")
+    except Exception as e:
         blocker = True
-        logging.warning("No description found matching pattern '{}'".format(description_text_pattern))
-    else:
-        logging.debug("Description with text pattern found: OK")
+        logging.warning("Could not perform checks on dataset {}".format(pid), exc_info=e)
 
-    files = dataset_metadata['files']
-
-    if len(files) > 4:
-        blocker = True
-        logging.warning("More than 4 files found: {}".format(files))
-    else:
-        logging.debug("Found {} files <= 4: OK".format(len(files)))
-
-    non_easy_migration_files = list(filter(lambda m: has_directoryLabel_different_from(m, 'easy-migration'), files))
-
-    if len(non_easy_migration_files) > 0:
-        blocker = True
-        logging.warning("Files other than 'easy-migration' found: {}".format(non_easy_migration_files))
-    else:
-        logging.debug("Only found easy-migration files: OK")
 
     if blocker:
         logging.warning("BLOCKERS FOUND, NOT PERFORMING DESTROY FOR {}".format(pid))
