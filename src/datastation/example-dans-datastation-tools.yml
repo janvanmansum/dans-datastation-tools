@@ -8,6 +8,9 @@ dataverse:
     user: dvnuser
     password: your-password-here
 
+migration_placeholders:
+  description_text_pattern: '^.*Files not yet migrated to Data Station. Files for this dataset can be found at.*$'
+
 logging:
   version: 1
   root:
