@@ -1,7 +1,9 @@
 import argparse
 import logging
 
+from datastation.batch_processing import batch_process
 from datastation.config import init
+from datastation.ds_pidsfile import load_pids
 from datastation.dv_api import get_dataset_metadata, destroy_dataset
 from re import match
 
@@ -28,18 +30,24 @@ def destroy_placeholder_dataset(server_url, api_token, pid, description_text_pat
     if len(list(filter(description_object_matches(description_text_pattern), descriptions))) == 0:
         blocker = True
         logging.warning("No description found matching pattern '{}'".format(description_text_pattern))
+    else:
+        logging.debug("Description with text pattern found: OK")
 
     files = dataset_metadata['files']
 
     if len(files) > 4:
         blocker = True
         logging.warning("More than 4 files found: {}".format(files))
+    else:
+        logging.debug("Found {} files <= 4: OK".format(len(files)))
 
     non_easy_migration_files = list(filter(lambda m: has_directoryLabel_different_from(m, 'easy-migration'), files))
 
     if len(non_easy_migration_files) > 0:
         blocker = True
         logging.warning("Files other than 'easy-migration' found: {}".format(non_easy_migration_files))
+    else:
+        logging.debug("Only found easy-migration files: OK")
 
     if blocker:
         logging.warning("BLOCKERS FOUND, NOT PERFORMING DESTROY FOR {}".format(pid))
@@ -52,6 +60,10 @@ def destroy_placeholder_dataset(server_url, api_token, pid, description_text_pat
 
 def main():
     config = init()
+    server_url = config['dataverse']['server_url']
+    api_token = config['dataverse']['api_token']
+    description_text_pattern = config['migration_placeholders']['description_text_pattern']
+
     parser = argparse.ArgumentParser(
         description='Destroy metadata-only placeholders for datasets that have not been migrated yet')
     parser.add_argument('-p', '--pid', dest='pid', help='Pid of a single placeholder dataset to destroy')
@@ -61,11 +73,13 @@ def main():
 
     args = parser.parse_args()
 
-    destroy_placeholder_dataset(config['dataverse']['server_url'],
-                                config['dataverse']['api_token'],
-                                args.pid,
-                                config['migration_placeholders']['description_text_pattern'],
-                                args.dry_run)
+    if args.pid is not None:
+        destroy_placeholder_dataset(server_url, api_token, args.pid, description_text_pattern, args.dry_run)
+    if args.pid_file is not None:
+        pids = load_pids(args.pid_file)
+        batch_process(pids,
+                      lambda pid: destroy_placeholder_dataset(server_url, api_token, pid, description_text_pattern,
+                                                              args.dry_run))
 
 
 if __name__ == '__main__':
