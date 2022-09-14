@@ -21,8 +21,8 @@ def main():
     if os.path.isdir(dest):
         dest = os.path.join(dest, batch_name)
 
-    dir_mode = config['ingest_flow']['deposits_mode']['directory']
-    file_mode = config['ingest_flow']['deposits_mode']['file']
+    dir_mode = int(config['ingest_flow']['deposits_mode']['directory'], 8)
+    file_mode = int(config['ingest_flow']['deposits_mode']['file'], 8)
     deposits_group = config['ingest_flow']['deposits_group']
 
     shutil.move(src=args.source, dst=dest)
