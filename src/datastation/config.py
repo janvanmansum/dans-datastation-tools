@@ -1,6 +1,5 @@
 import os
 from os.path import exists
-from shutil import copyfile
 import yaml
 from pkgutil import get_data
 from logging import config as logconfig
@@ -21,6 +20,9 @@ def ensure_configuration_file_exists():
                 print("WARN: cannot find example-dans-datastation-tools.yml")
             else:
                 f.write(example_cfg)
+                f.flush()
+                logging.debug("Make sure only user can read and write configuration file")
+                os.chmod(path=configuration_file, mode=700)
 
 
 def find_config_file():

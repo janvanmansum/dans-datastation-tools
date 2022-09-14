@@ -1,5 +1,6 @@
 import argparse
-import os
+import os, grp
+import shutil
 
 import requests
 from builtins import all
@@ -37,3 +38,14 @@ def has_dirtree_pred(dir, pred):
 def list_events(service_baseurl, params):
     r = requests.get('%s/events' % service_baseurl, headers={'Accept': 'text/csv'}, params=params)
     print(r.text)
+
+def set_permissions(dir, dir_mode, file_mode, group):
+    for root, dirs, files in os.walk(dir):
+        for d in root + dirs:
+            os.chmod(d, dir_mode)
+            shutil.chown(d, group=group)
+        for f in files:
+            os.chmod(f, file_mode)
+            shutil.chown(f, group=group)
+
+

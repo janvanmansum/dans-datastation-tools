@@ -13,6 +13,10 @@ migration_placeholders:
 
 ingest_flow:
   service_baseurl: 'http://localhost:20300'
+  deposits_mode:
+    directory: '0770'
+    file: '0660'
+  deposits_group: deposits
   ingest_areas:
     import: '/var/opt/dans.knaw.nl/tmp/import'
     migration: '/var/opt/dans.knaw.nl/tmp/migration'
