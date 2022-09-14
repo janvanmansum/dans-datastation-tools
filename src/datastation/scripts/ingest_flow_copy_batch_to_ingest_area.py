@@ -1,4 +1,5 @@
 import argparse
+import os.path
 import shutil
 
 from datastation.config import init
@@ -12,6 +13,13 @@ def main():
                                                        ' created and the contents of the batch is copied to it.')
     args = parser.parse_args()
 
-    shutil.copytree(src=args.source, dst=args.dest)
+    src = args.source
+    batch_name = os.path.basename(src)
+    dest = args.dest
+
+    if os.path.isdir(dest):
+        dest = os.path.join(dest, batch_name)
+
+    shutil.copytree(src=args.source, dst=dest)
 
     return 0
