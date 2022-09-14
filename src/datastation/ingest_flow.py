@@ -41,7 +41,7 @@ def list_events(service_baseurl, params):
 
 def set_permissions(dir, dir_mode, file_mode, group):
     for root, dirs, files in os.walk(dir):
-        for d in root + dirs:
+        for d in [root] + dirs:
             os.chmod(d, dir_mode)
             shutil.chown(d, group=group)
         for f in files:
