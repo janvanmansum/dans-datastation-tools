@@ -26,7 +26,6 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-# TODO: figure out which of the scripts to keep and how to name them in a consistent way
 dv-dataset-oai-harvest = "datastation.scripts.oai_harvest:main"
 dv-datacite-records-update = "datastation.scripts.update_datacite_records:main"
 dv-dataset-add-role-assignment="datastation.scripts.add_role_assignments:main"
@@ -44,3 +43,9 @@ dv-dataset-retrieve-pids="datastation.scripts.retrieve_dataset_pids:main"
 dv-dataset-unlock = "datastation.scripts.unlock_datasets:main"
 dv-file-prestage="datastation.scripts.prestage_files:main"
 dv-user-import="datastation.scripts.import_user:main"
+
+ingest-flow-copy-batch-to-ingest-area="datastation.scripts.ingest_flow_copy_batch_to_ingest_area:main"
+ingest-flow-move-batch-to-ingest-area="datastation.scripts.ingest_flow_move_batch_to_ingest_area:main"
+ingest-flow-reset-batch="datastation.scripts.ingest_flow_reset_batch:main"
+ingest-flow-start-migration="datastation.scripts.ingest_flow_start_migration:main"
+ingest-flow-start-import="datastation.scripts.ingest_flow_start_import:main"
