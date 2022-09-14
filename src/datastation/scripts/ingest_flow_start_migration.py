@@ -13,8 +13,9 @@ def main():
                         help="continue previously stopped batch (i.e. allow output directory to be non-empty)")
 
     args = parser.parse_args()
+    service_baseurl = config['ingest_flow']['service_baseurl']
 
-    start_import(args.deposit_path, args.continue_previous, is_migration=True)
+    start_import(service_baseurl, args.deposit_path, args.continue_previous, is_migration=True)
 
 
 if __name__ == '__main__':

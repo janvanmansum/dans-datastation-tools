@@ -5,11 +5,9 @@ import requests
 from builtins import all
 import stat
 
-service_baseurl = 'http://localhost:20300'
-
 file_writeable_to_group = lambda f: os.stat(f).st_mode & stat.S_IWGRP > 0
 
-def start_import(path, continue_previous, is_migration):
+def start_import(service_baseurl, path, continue_previous, is_migration):
     if not has_dirtree_pred(path, file_writeable_to_group):
         chmod_command = "chmod -R g+w %s" % path
         print("Some files in the import batch do not give the owner group write permissions. Executing '%s' to fix it" % chmod_command)
@@ -36,6 +34,6 @@ def has_dirtree_pred(dir, pred):
                and all(pred(os.path.join(root, dir)) for dir in dirs) \
                and all(pred(os.path.join(root, file)) for file in files)
 
-def list_events(params):
+def list_events(service_baseurl, params):
     r = requests.get('%s/events' % service_baseurl, headers={'Accept': 'text/csv'}, params=params)
     print(r.text)

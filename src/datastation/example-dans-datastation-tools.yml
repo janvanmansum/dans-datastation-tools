@@ -13,7 +13,9 @@ migration_placeholders:
 
 ingest_flow:
   service_baseurl: 'http://localhost:20300'
-
+  ingest_areas:
+    import: '/var/opt/dans.knaw.nl/tmp/import'
+    migration: '/var/opt/dans.knaw.nl/tmp/migration'
 
 logging:
   version: 1
