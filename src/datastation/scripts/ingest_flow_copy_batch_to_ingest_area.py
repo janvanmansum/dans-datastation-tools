@@ -3,7 +3,7 @@ import os.path
 import shutil
 
 from datastation.config import init
-from datastation.ingest_flow import set_permissions, is_subpath_of
+from datastation.ingest_flow import set_permissions, is_subpath_of, is_dir_in_inbox
 
 
 def main():
@@ -25,12 +25,11 @@ def main():
     file_mode = int(config['ingest_flow']['deposits_mode']['file'], 8)
     deposits_group = config['ingest_flow']['deposits_group']
     ingest_areas = config['ingest_flow']['ingest_areas']
-
-    if next(filter(lambda p: is_subpath_of(dest, p), ingest_areas), None) is None:
-        print("Destination {} is not located in a configured ingest area".format(dest))
-        return 1
-
-    shutil.copytree(src=args.source, dst=dest)
-    set_permissions(dest, dir_mode, file_mode, deposits_group)
-
-    return 0
+    inboxes = list(map(lambda a: a['inbox'], ingest_areas.values()))
+    if is_dir_in_inbox(dest, inboxes):
+        shutil.copytree(src=args.source, dst=dest)
+        set_permissions(dest, dir_mode, file_mode, deposits_group)
+    else:
+        print("Destination {} is not located in a configured ingest area inbox (one of {})".format(dest,
+                                                                                                   ", ".join(inboxes)))
+        exit(1)

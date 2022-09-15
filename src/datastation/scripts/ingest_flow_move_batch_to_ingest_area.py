@@ -3,7 +3,7 @@ import os.path
 import shutil
 
 from datastation.config import init
-from datastation.ingest_flow import set_permissions
+from datastation.ingest_flow import set_permissions, is_subpath_of, is_dir_in_inbox
 
 
 def main():
@@ -24,8 +24,12 @@ def main():
     dir_mode = int(config['ingest_flow']['deposits_mode']['directory'], 8)
     file_mode = int(config['ingest_flow']['deposits_mode']['file'], 8)
     deposits_group = config['ingest_flow']['deposits_group']
-
-    shutil.move(src=args.source, dst=dest)
-    set_permissions(dest, dir_mode, file_mode, deposits_group)
-
-    return 0
+    ingest_areas = config['ingest_flow']['ingest_areas']
+    inboxes = list(map(lambda a: a['inbox'], ingest_areas.values()))
+    if is_dir_in_inbox(dest, inboxes):
+        shutil.move(src=args.source, dst=dest)
+        set_permissions(dest, dir_mode, file_mode, deposits_group)
+    else:
+        print("Destination {} is not located in a configured ingest area inbox (one of {})".format(dest,
+                                                                                                   ", ".join(inboxes)))
+        exit(1)

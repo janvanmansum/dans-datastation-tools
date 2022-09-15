@@ -47,7 +47,16 @@ def set_permissions(dir, dir_mode, file_mode, group):
             os.chmod(p, file_mode)
             shutil.chown(p, group=group)
 
+def is_dir_in_inbox(dir, inboxes):
+    return next(filter(lambda p: is_subpath_of(dir, p),  inboxes), None) is not None
+
 def is_subpath_of(dir, parent):
     absolute_parent = os.path.abspath(parent)
     absolute_dir = os.path.abspath(dir)
     return absolute_dir.startswith(absolute_parent)
+
+def progress_report(deposit_dir, ingest_areas):
+    # find the ingest area
+    # find the relative path (assume first dir is inbox?)
+    #
+    return ""
