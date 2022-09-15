@@ -23,9 +23,6 @@ def start_import(service_baseurl, path, continue_previous, is_migration):
     })
     print('Server responded: %s' % r.text)
 
-#
-# Helper functions
-#
 def has_file_pred(file, pred):
     return pred(file)
 
@@ -50,4 +47,7 @@ def set_permissions(dir, dir_mode, file_mode, group):
             os.chmod(p, file_mode)
             shutil.chown(p, group=group)
 
-
+def is_subpath_of(dir, parent):
+    absolute_parent = os.path.abspath(parent)
+    absolute_dir = os.path.abspath(dir)
+    return absolute_dir.startswith(absolute_parent)
