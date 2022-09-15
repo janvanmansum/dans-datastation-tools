@@ -1,4 +1,5 @@
 import argparse
+import logging
 import os.path
 import shutil
 
@@ -27,8 +28,11 @@ def main():
     ingest_areas = config['ingest_flow']['ingest_areas']
     inboxes = list(map(lambda a: a['inbox'], ingest_areas.values()))
     if is_dir_in_inbox(dest, inboxes):
+        logging.debug("Moving from {} to {}".format(args.source, dest))
         shutil.move(src=args.source, dst=dest)
+        logging.debug("Setting permissions and group...")
         set_permissions(dest, dir_mode, file_mode, deposits_group)
+        logging.info("Done")
     else:
         print("Destination {} is not located in a configured ingest area inbox (one of {})".format(dest,
                                                                                                    ", ".join(inboxes)))
