@@ -1,4 +1,6 @@
 import argparse
+import json
+import logging
 import os, grp
 import shutil
 
@@ -8,7 +10,7 @@ import stat
 
 file_writeable_to_group = lambda f: os.stat(f).st_mode & stat.S_IWGRP > 0
 
-def start_import(service_baseurl, path, continue_previous, is_migration):
+def start_import(service_baseurl, path, is_batch, continue_previous, is_migration, is_dry_run):
     if not has_dirtree_pred(path, file_writeable_to_group):
         chmod_command = "chmod -R g+w %s" % path
         print("Some files in the import batch do not give the owner group write permissions. Executing '%s' to fix it" % chmod_command)
@@ -17,11 +19,17 @@ def start_import(service_baseurl, path, continue_previous, is_migration):
             print("Could not give owner group write permissions. Possibly your account is not the owner user of the files.")
             return
     print("Sending start import request to server...")
-    r = requests.post('%s/%s/:start' % (service_baseurl, "migrations" if is_migration else "imports"), json={
-        'batch': os.path.abspath(path),
+    command = {
+        'inputPath': os.path.abspath(path),
+        'batch': is_batch,
         'continue': continue_previous
-    })
-    print('Server responded: %s' % r.text)
+    }
+    if is_dry_run:
+        logging.info("Only printing command, not sending it...")
+        print(json.dumps(command, indent=2))
+    else:
+        r = requests.post('%s/%s/:start' % (service_baseurl, "migrations" if is_migration else "imports"), json=command)
+        print('Server responded: %s' % r.text)
 
 def has_file_pred(file, pred):
     return pred(file)
