@@ -1,0 +1,37 @@
+== Info: Could not resolve host: data
+== Info: Closing connection 0
+== Info:   Trying 127.0.0.1:20330...
+== Info: Connected to localhost (127.0.0.1) port 20330 (#1)
+=> Send header, 87 bytes (0x57)
+0000: 47 45 54 20 2f 76 61 6c 69 64 61 74 65 20 48 54 GET /validate HT
+0010: 54 50 2f 31 2e 31 0d 0a 48 6f 73 74 3a 20 6c 6f TP/1.1..Host: lo
+0020: 63 61 6c 68 6f 73 74 3a 32 30 33 33 30 0d 0a 55 calhost:20330..U
+0030: 73 65 72 2d 41 67 65 6e 74 3a 20 63 75 72 6c 2f ser-Agent: curl/
+0040: 37 2e 37 39 2e 31 0d 0a 41 63 63 65 70 74 3a 20 7.79.1..Accept: 
+0050: 2a 2f 2a 0d 0a 0d 0a                            */*....
+== Info: Mark bundle as not supporting multiuse
+<= Recv header, 33 bytes (0x21)
+0000: 48 54 54 50 2f 31 2e 31 20 34 30 35 20 4d 65 74 HTTP/1.1 405 Met
+0010: 68 6f 64 20 4e 6f 74 20 41 6c 6c 6f 77 65 64 0d hod Not Allowed.
+0020: 0a                                              .
+<= Recv header, 37 bytes (0x25)
+0000: 44 61 74 65 3a 20 54 68 75 2c 20 32 32 20 53 65 Date: Thu, 22 Se
+0010: 70 20 32 30 32 32 20 31 31 3a 31 38 3a 30 30 20 p 2022 11:18:00 
+0020: 47 4d 54 0d 0a                                  GMT..
+<= Recv header, 21 bytes (0x15)
+0000: 41 6c 6c 6f 77 3a 20 50 4f 53 54 2c 4f 50 54 49 Allow: POST,OPTI
+0010: 4f 4e 53 0d 0a                                  ONS..
+<= Recv header, 32 bytes (0x20)
+0000: 43 6f 6e 74 65 6e 74 2d 54 79 70 65 3a 20 61 70 Content-Type: ap
+0010: 70 6c 69 63 61 74 69 6f 6e 2f 6a 73 6f 6e 0d 0a plication/json..
+<= Recv header, 20 bytes (0x14)
+0000: 43 6f 6e 74 65 6e 74 2d 4c 65 6e 67 74 68 3a 20 Content-Length: 
+0010: 35 32 0d 0a                                     52..
+<= Recv header, 2 bytes (0x2)
+0000: 0d 0a                                           ..
+<= Recv data, 52 bytes (0x34)
+0000: 7b 22 63 6f 64 65 22 3a 34 30 35 2c 22 6d 65 73 {"code":405,"mes
+0010: 73 61 67 65 22 3a 22 48 54 54 50 20 34 30 35 20 sage":"HTTP 405 
+0020: 4d 65 74 68 6f 64 20 4e 6f 74 20 41 6c 6c 6f 77 Method Not Allow
+0030: 65 64 22 7d                                     ed"}
+== Info: Connection #1 to host localhost left intact

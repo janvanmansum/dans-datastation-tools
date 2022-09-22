@@ -2,37 +2,51 @@ import argparse
 import json
 import logging
 import os
+from email import encoders
+from email.mime.application import MIMEApplication
 
 import requests
 
 from datastation.config import init
 from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 
 
 def validate_dans_bag(path, package_type, level, validator_url, is_dry_run):
-    parts = {
-        'command': ('command',
-                    bytes(json.dumps({
-                        'bagLocation': os.path.abspath(path),
-                        'packageType': package_type,
-                        'level': level
-                    }), "utf-8"), 'application/json')
+    command = {
+        'bagLocation': os.path.abspath(path),
+        'packageType': package_type,
+        'level': level
     }
-    session = requests.Session()
+
+    msg = MIMEMultipart("form-data")
+    p = MIMEApplication(json.dumps(command), "json", _encoder=encoders.encode_noop)
+    p.add_header("Content-Disposition", "form-data; name=command")
+    msg.attach(p)
+
+    body = msg.as_string().split('\n\n', 1)[1]
+    headers = dict(msg.items())
+
     if is_dry_run:
         logging.info("Only printing command, not sending it...")
-        print(parts)
+        print(msg.as_string())
     else:
-        r = session.post('{}/validate'.format(validator_url), files=parts,
-                         headers={'Content-Type': 'multipart/form-data'})
+        r = requests.post('{}/validate'.format(validator_url), data=body,
+                          headers=headers)
         print('Server responded: %s' % r.text)
 
     return 0
 
 
+def validate_dans_bag_in_deposit(path, package_type, level, validator_url, is_dry_run):
+    subdirs = get_subdirs(path)
+    if len(subdirs) == 1:
+        validate_dans_bag(subdirs[0], package_type, level, validator_url, is_dry_run)
+    else:
+        print("ERROR: deposit found with {} subdirectories. There should be exactly one".format(len(subdirs)))
+
+
 def get_subdirs(dir):
-    return list(filter(lambda d: os.path.isdir(os.path.join(dir, d)), os.listdir(dir)))
+    return list(filter(lambda d: os.path.isdir(d), map(lambda d: os.path.join(dir, d), os.listdir(dir))))
 
 
 def main():
@@ -62,16 +76,14 @@ def main():
         validate_dans_bag(path, package_type, level, service_baseurl, dry_run)
     elif os.path.exists("{}/deposit.properties".format(path)):
         logging.info("Found a deposit at {}".format(path))
-        subdirs = get_subdirs(path)
-        if len(subdirs) == 1:
-            validate_dans_bag(subdirs[0], package_type, level, service_baseurl, dry_run)
-        else:
-            print("ERROR: deposit found with {} subdirectories. There should be exactly one".format(len(subdirs)))
+        validate_dans_bag_in_deposit(path, package_type, level, service_baseurl, dry_run)
     else:
         logging.info("Not a bag or a deposit, assuming batch of deposits")
         subdirs = get_subdirs(path)
+        logging.info("Found {} deposits to validate".format(len(subdirs)))
         for d in subdirs:
-            validate_dans_bag(d, package_type, level, service_baseurl, dry_run)
+            logging.debug("Validating {}".format(d))
+            validate_dans_bag_in_deposit(os.path.join(path, d), package_type, level, service_baseurl, dry_run)
 
 
 if __name__ == '__main__':
