@@ -18,8 +18,15 @@ ingest_flow:
     file: '0660'
   deposits_group: deposits
   ingest_areas:
-    import: '/var/opt/dans.knaw.nl/tmp/import'
-    migration: '/var/opt/dans.knaw.nl/tmp/migration'
+    import:
+      inbox: '/var/opt/dans.knaw.nl/tmp/import/inbox'
+      outbox: '/var/opt/dans.knaw.nl/tmp/import/outbox'
+    migration:
+      inbox: '/var/opt/dans.knaw.nl/tmp/migration/deposits'
+      outbox: '/var/opt/dans.knaw.nl/tmp/migration/out'
+
+dans_bag_validator:
+  service_baseurl: 'http://localhost:20330'
 
 logging:
   version: 1

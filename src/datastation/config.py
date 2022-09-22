@@ -22,7 +22,7 @@ def ensure_configuration_file_exists():
                 f.write(example_cfg)
                 f.flush()
                 logging.debug("Make sure only user can read and write configuration file")
-                os.chmod(path=configuration_file, mode=700)
+                os.chmod(path=configuration_file, mode=0o700)
 
 
 def find_config_file():
