@@ -8,10 +8,36 @@ SYNOPSIS
 
 ```bash
 pip3 install dans-datastation-tools
-ds-dataset-list-role-assignements
-ds-datacite-update-record < dataset-pids.txt    # Update list of datasets at DataCite
-ds-datacite-update-record 10.17026/some-suffix # Update one dataset at DataCite
-ds-dataset-get-metadata 
+
+# Available commands, use --help for more information
+
+# Manage a dataverse collection
+dv-dataverse-retrieve-pids
+dv-dataverse-oai-harvest
+
+# Manage role assignments
+dv-dataset-find-with-role-assignment
+dv-dataset-add-role-assignment
+dv-dataset-delete-role-assignment
+
+# Manage dataset metadata
+dv-dataset-replace-metadata-field-values
+dv-dataset-retrieve-metadata
+dv-dataset-retrieve-metadata-field
+
+# Manage dataset state
+dv-dataset-delete-draft
+dv-dataset-publish
+dv-dataset-reindex
+dv-dataset-unlock
+dv-dataset-update-datacite-record
+
+# User management
+dv-user-import
+
+# Helper scripts for the migration from EASY
+dv-dataset-destroy-migration-placeholder
+dv-file-prestage
 
 
 ```
