@@ -110,14 +110,19 @@ def create_yaml_result_writer(f: typing.TextIO):
 
 def main():
     config = init()
+    default_info_package_type = config['dans_bag_validator']['default_information_package_type']
+
     parser = argparse.ArgumentParser(
         description='Validate one or more bags to see if they comply with the DANS BagIt Profile v1')
     parser.add_argument('path', metavar='<batch-or-deposit-or-bag>',
                         help='Directory containing a bag, a deposit or a batch of deposits')
-    parser.add_argument('-m', '--migration', dest='is_migration', action='store_true',
-                        help='Validate the bag as a migration')
-    parser.add_argument('--with-data-station-context', dest='in_context', action='store_true',
-                        help='Validate in Data Station context')
+    parser.add_argument('-t', '--information-package-type', dest='info_package_type',
+                        help='Which information package type to validate this bag as',
+                        choices=['DEPOSIT', 'MIGRATION'],
+                        default=default_info_package_type)
+    parser.add_argument('-l', '--level', dest='level', help='Level of validation',
+                        choices=['STAND-ALONE', 'WITH-DATA-STATION-CONTEXT'],
+                        default='STAND-ALONE')
     parser.add_argument('-d', '--dry-run', dest='dry_run', action='store_true',
                         help='Only print command to be sent to server, but do not actually send it')
     parser.add_argument('-o', '--out-file', dest='out_file',
@@ -127,8 +132,8 @@ def main():
 
     args = parser.parse_args()
     service_baseurl = config['dans_bag_validator']['service_baseurl']
-    package_type = "MIGRATION" if args.is_migration else "DEPOSIT"
-    level = "WITH-DATA-STATION-CONTEXT" if args.in_context else "STAND-ALONE"
+    package_type = args.info_package_type
+    level = args.level
     dry_run = args.dry_run
     path = args.path
 
