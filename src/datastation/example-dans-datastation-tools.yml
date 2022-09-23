@@ -11,6 +11,23 @@ dataverse:
 migration_placeholders:
   description_text_pattern: '^.*Files not yet migrated to Data Station. Files for this dataset can be found at.*$'
 
+ingest_flow:
+  service_baseurl: 'http://localhost:20300'
+  deposits_mode:
+    directory: '0770'
+    file: '0660'
+  deposits_group: deposits
+  ingest_areas:
+    import:
+      inbox: '/var/opt/dans.knaw.nl/tmp/import/inbox'
+      outbox: '/var/opt/dans.knaw.nl/tmp/import/outbox'
+    migration:
+      inbox: '/var/opt/dans.knaw.nl/tmp/migration/deposits'
+      outbox: '/var/opt/dans.knaw.nl/tmp/migration/out'
+
+dans_bag_validator:
+  service_baseurl: 'http://localhost:20330'
+
 logging:
   version: 1
   root:
