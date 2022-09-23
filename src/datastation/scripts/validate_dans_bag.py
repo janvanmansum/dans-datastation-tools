@@ -2,6 +2,7 @@ import argparse
 import json
 import logging
 import os
+import csv
 from email import encoders
 from email.mime.application import MIMEApplication
 
@@ -11,7 +12,7 @@ from datastation.config import init
 from email.mime.multipart import MIMEMultipart
 
 
-def validate_dans_bag(path, package_type, level, validator_url, accept_json, is_dry_run):
+def validate_dans_bag(path, package_type, level, validator_url, accept_json, is_dry_run, csv_writer=None):
     command = {
         'bagLocation': os.path.abspath(path),
         'packageType': package_type,
@@ -25,7 +26,7 @@ def validate_dans_bag(path, package_type, level, validator_url, accept_json, is_
 
     body = msg.as_string().split('\n\n', 1)[1]
     headers = dict(msg.items())
-    headers.update({'Accept': 'application/json' if accept_json else 'text/plain'})
+    headers.update({'Accept': 'application/json' if accept_json or csv_writer is not None else 'text/plain'})
 
     if is_dry_run:
         logging.info("Only printing command, not sending it...")
@@ -35,19 +36,46 @@ def validate_dans_bag(path, package_type, level, validator_url, accept_json, is_
                           headers=headers)
         print('Server responded: %s' % r.text)
 
+        if csv_writer is not None:
+            result = json.loads(r.text)
+
+            csv_writer.writerow({
+                'BAG' : result["Name"],
+                'COMPLIANT': result["Is compliant"],
+                'RULE VIOLATIONS': result["Rule violations"]
+            })
+
+
     return 0
 
 
-def validate_dans_bag_in_deposit(path, package_type, level, validator_url, accept_json, is_dry_run):
+def validate_dans_bag_in_deposit(path, package_type, level, validator_url, accept_json, is_dry_run, csv_writer=None):
     subdirs = get_subdirs(path)
     if len(subdirs) == 1:
-        validate_dans_bag(subdirs[0], package_type, level, validator_url, accept_json, is_dry_run)
+        validate_dans_bag(subdirs[0], package_type, level, validator_url, accept_json, is_dry_run, csv_writer)
     else:
         print("ERROR: deposit found with {} subdirectories. There should be exactly one".format(len(subdirs)))
 
 
 def get_subdirs(dir):
     return list(filter(lambda d: os.path.isdir(d), map(lambda d: os.path.join(dir, d), os.listdir(dir))))
+
+
+def validate_command(path, package_type, level, service_baseurl, accept_json, dry_run, csv_writer=None):
+    if os.path.exists("{}/bagit.txt".format(path)):
+        logging.info("Found one bag at {}".format(path))
+        validate_dans_bag(path, package_type, level, service_baseurl, accept_json, dry_run, csv_writer)
+    elif os.path.exists("{}/deposit.properties".format(path)):
+        logging.info("Found a deposit at {}".format(path))
+        validate_dans_bag_in_deposit(path, package_type, level, service_baseurl, accept_json, dry_run, csv_writer)
+    else:
+        logging.info("Not a bag or a deposit, assuming batch of deposits")
+        subdirs = get_subdirs(path)
+        logging.info("Found {} deposits to validate".format(len(subdirs)))
+        for d in subdirs:
+            logging.debug("Validating {}".format(d))
+            validate_dans_bag_in_deposit(os.path.join(path, d), package_type, level, service_baseurl, accept_json,
+                                         dry_run, csv_writer)
 
 
 def main():
@@ -64,29 +92,25 @@ def main():
                         help='Only print command to be sent to server, but do not actually send it')
     parser.add_argument('-j', '--json', dest='accept_json', action='store_true',
                         help='Ask the server to return JSON instead of Yaml')
+    parser.add_argument('-o', '--output', dest='out_csv',
+                        help='CSV file to store the validation results to. ("-" for stdout)')
 
     args = parser.parse_args()
     service_baseurl = config['dans_bag_validator']['service_baseurl']
     package_type = "MIGRATION" if args.is_migration else "DEPOSIT"
     level = "WITH-DATA-STATION-CONTEXT" if args.in_context else "STAND-ALONE"
     dry_run = args.dry_run
-
     path = args.path
+    accept_json = args.accept_json
 
-    if os.path.exists("{}/bagit.txt".format(path)):
-        logging.info("Found one bag at {}".format(path))
-        validate_dans_bag(path, package_type, level, service_baseurl, args.accept_json, dry_run)
-    elif os.path.exists("{}/deposit.properties".format(path)):
-        logging.info("Found a deposit at {}".format(path))
-        validate_dans_bag_in_deposit(path, package_type, level, service_baseurl, args.accept_json, dry_run)
+    if args.out_csv is None:
+        validate_command(path, package_type, level, service_baseurl, accept_json, dry_run)
     else:
-        logging.info("Not a bag or a deposit, assuming batch of deposits")
-        subdirs = get_subdirs(path)
-        logging.info("Found {} deposits to validate".format(len(subdirs)))
-        for d in subdirs:
-            logging.debug("Validating {}".format(d))
-            validate_dans_bag_in_deposit(os.path.join(path, d), package_type, level, service_baseurl, args.accept_json,
-                                         dry_run)
+        with(open(args.out_csv, 'w')) as out_file:
+            fieldnames = ['BAG', 'COMPLIANT', 'RULE VIOLATIONS']
+            csv_writer = csv.DictWriter(out_file, fieldnames=fieldnames)
+            csv_writer.writeheader()
+            validate_command(path, package_type, level, service_baseurl, accept_json, dry_run, csv_writer)
 
 
 if __name__ == '__main__':
