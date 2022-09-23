@@ -35,10 +35,18 @@ dv-dataset-update-datacite-record
 # User management
 dv-user-import
 
+# Manage dd-ingest-flow
+ingest-flow-copy-batch-to-ingest-area
+ingest-flow-move-batch-to-ingest-area
+ingest-flow-start-migration
+ingest-flow-start-import
+
+# Validate bags for compliance with DANS BagIt Profile
+dans-bag-validate
+
 # Helper scripts for the migration from EASY
 dv-dataset-destroy-migration-placeholder
 dv-file-prestage
-
 
 ```
 
