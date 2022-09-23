@@ -15,10 +15,8 @@ dicttoxml = "^1.7.4"
 pyYAML = "^6.0"
 psycopg = "^3.0.16"
 
-
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
-mkdocs = "==1.3.0"
 psycopg_binary = "^3.0.16"
 
 [build-system]
@@ -26,7 +24,8 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-dv-dataset-update-datacite-record = "datastation.scripts.update_datacite_records:main"
+dv-dataset-oai-harvest = "datastation.scripts.oai_harvest:main"
+dv-datacite-records-update = "datastation.scripts.update_datacite_records:main"
 dv-dataset-add-role-assignment="datastation.scripts.add_role_assignments:main"
 dv-dataset-delete-draft="datastation.scripts.delete_draft_datasets:main"
 dv-dataset-delete-role-assignment="datastation.scripts.delete_role_assignments:main"
@@ -42,3 +41,11 @@ dv-dataverse-oai-harvest = "datastation.scripts.oai_harvest:main"
 dv-dataverse-retrieve-pids="datastation.scripts.retrieve_dataset_pids:main"
 dv-file-prestage="datastation.scripts.prestage_files:main"
 dv-user-import="datastation.scripts.import_user:main"
+
+ingest-flow-copy-batch-to-ingest-area="datastation.scripts.ingest_flow_copy_batch_to_ingest_area:main"
+ingest-flow-move-batch-to-ingest-area="datastation.scripts.ingest_flow_move_batch_to_ingest_area:main"
+ingest-flow-start-migration="datastation.scripts.ingest_flow_start_migration:main"
+ingest-flow-start-import="datastation.scripts.ingest_flow_start_import:main"
+ingest-flow-progress-report="datastation.scripts.ingest_flow_progress_report:main"
+
+dans-bag-validate="datastation.scripts.validate_dans_bag:main"
