@@ -36,7 +36,7 @@ def validate_dans_bag(path, package_type, level, validator_url, accept_json, is_
     else:
         r = requests.post('{}/validate'.format(validator_url), data=body,
                           headers=headers)
-        print("Server responded: {}".format(r.text))
+        print(r.text)
         if accept_json:
             result = json.loads(r.text)
         else:
