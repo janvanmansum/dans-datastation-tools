@@ -119,13 +119,10 @@ def main():
                         help='Validate in Data Station context')
     parser.add_argument('-d', '--dry-run', dest='dry_run', action='store_true',
                         help='Only print command to be sent to server, but do not actually send it')
-    parser.add_argument('-j', '--json', dest='accept_json', action='store_true',
-                        help='Ask the server to return JSON instead of Yaml')
     parser.add_argument('-o', '--out-file', dest='out_file',
                         required=True,
-                        help='Output file to save results to. If the file name ends in .csv the output is saved as CSV. '
-                             'Otherwise it is saved as JSON or YAML depending on the presents or absense of the '
-                             '--json flag')
+                        help='Output file to save results to. If the file name ends in .csv the output is saved as CSV, '
+                             'if .json as JSON and otherwise as Yaml')
 
     args = parser.parse_args()
     service_baseurl = config['dans_bag_validator']['service_baseurl']
@@ -133,16 +130,16 @@ def main():
     level = "WITH-DATA-STATION-CONTEXT" if args.in_context else "STAND-ALONE"
     dry_run = args.dry_run
     path = args.path
-    accept_json = args.accept_json
 
     with(open(args.out_file, 'w')) as f:
         if args.out_file.endswith('.csv'):
             fieldnames = ['DEPOSIT', 'BAG', 'COMPLIANT', 'RULE VIOLATIONS']
             csv_writer = csv.DictWriter(f, fieldnames=fieldnames)
             csv_writer.writeheader()
-            validate_command(path, package_type, level, service_baseurl, accept_json, dry_run,
-                             create_csv_result_writer(csv_writer))
+            validate_command(path, package_type, level, service_baseurl, accept_json=True, dry_run=dry_run,
+                             output_writer=create_csv_result_writer(csv_writer))
         else:
+            accept_json = args.out_file.endswith('.json')
             try:
                 if accept_json:
                     f.write("[")
