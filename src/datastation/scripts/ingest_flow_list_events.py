@@ -21,7 +21,9 @@ def main():
         params['source'] = args.source
     if args.deposit_id is not None:
         params['depositId'] = args.deposit_id
-    list_events(params)
+
+    service_url = config['ingest_flow']['service_baseurl']
+    list_events(service_url, params)
 
 
 if __name__ == '__main__':

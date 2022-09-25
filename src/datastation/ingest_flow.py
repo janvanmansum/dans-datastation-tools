@@ -63,8 +63,17 @@ def is_subpath_of(dir, parent):
     absolute_dir = os.path.abspath(dir)
     return absolute_dir.startswith(absolute_parent)
 
-def progress_report(deposit_dir, ingest_areas):
-    # find the ingest area
-    # find the relative path (assume first dir is inbox?)
-    #
-    return ""
+# def progress_report(batch_dir, inboxes):
+#     abs_batch_dir = os.path.abspath(batch_dir)
+#     inbox = next(filter(lambda ib: is_subpath_of(abs_batch_dir, ib), inboxes), None)
+#     if inbox is None:
+#         print("ERROR: batch_dir does not seems to be in one of the inboxes: {}".format(inboxes))
+#         return 1
+#     else:
+#         relative_batch_path = abs_batch_dir.remove(inbox)
+#         outbox =
+#
+#
+#     # find the relative path (assume first dir is inbox?)
+#     #
+#     return ""

@@ -46,6 +46,7 @@ ingest-flow-copy-batch-to-ingest-area="datastation.scripts.ingest_flow_copy_batc
 ingest-flow-move-batch-to-ingest-area="datastation.scripts.ingest_flow_move_batch_to_ingest_area:main"
 ingest-flow-start-migration="datastation.scripts.ingest_flow_start_migration:main"
 ingest-flow-start-import="datastation.scripts.ingest_flow_start_import:main"
+ingest-flow-list-events="datastation.scripts.ingest_flow_list_events:main"
 ingest-flow-progress-report="datastation.scripts.ingest_flow_progress_report:main"
 
 dans-bag-validate="datastation.scripts.validate_dans_bag:main"
