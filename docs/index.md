@@ -57,6 +57,21 @@ This module contains a variety of command line scripts to facilitate DANS Data S
 with a command line help.
 
 
+EXAMPLES
+--------
+
+### dans-bag-validate
+
+The JSON output of this command can be queried with [jq]{:target=_blank}. This tool as a very good manual, but here are
+some examples to get you started:
+
+```text
+dans-bag-validator <target> -o ~/results.json
+
+# Print only the bag location and the violations
+cat results.json | jq 'map({location: ."Bag location", violations: ."Rule violations"})'
+```
+
 INSTALLATION & CONFIGURATION
 ----------------------------
 
@@ -85,3 +100,5 @@ development.
 
 For the available configuration options and their meaning, see the explanatory comments in the configuration file
 itself.
+
+[jq]: https://stedolan.github.io/jq/manual/
