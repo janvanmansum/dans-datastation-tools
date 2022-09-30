@@ -62,14 +62,18 @@ EXAMPLES
 
 ### dans-bag-validate
 
-The JSON output of this command can be queried with [jq]{:target=_blank}. This tool as a very good manual, but here are
-some examples to get you started:
+The JSON output of this command can be queried with [jq]{:target=_blank}. This tool has a very good manual. However, to 
+get you started, here are some example queries:
 
 ```text
 dans-bag-validator <target> -o ~/results.json
 
 # Print only the bag location and the violations
 cat results.json | jq 'map({location: ."Bag location", violations: ."Rule violations"})'
+
+# Count the number of bags that are non-compliant
+cat results.json | jq '[.[] | select(."Is compliant" == false)] | length'
+
 ```
 
 INSTALLATION & CONFIGURATION
