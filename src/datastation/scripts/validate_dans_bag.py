@@ -75,7 +75,7 @@ def validate_command(path, package_type, level, service_baseurl, accept_json, dr
         is_first = True
         for d in subdirs:
             logging.debug("Validating {}".format(d))
-            validate_dans_bag_in_deposit(os.path.join(path, d), package_type, level, service_baseurl, accept_json,
+            validate_dans_bag_in_deposit(d, package_type, level, service_baseurl, accept_json,
                                          dry_run, output_writer, is_first)
             is_first = False
 
