@@ -62,7 +62,7 @@ EXAMPLES
 
 ### dans-bag-validate
 
-The JSON output of this command can be queried with [jq]{:target=_blank}. This tool has a very good manual. However, to 
+The JSON output of this command can be queried with [jq]{:target=_blank}. This tool has a very good manual. However, to
 get you started, here are some example queries:
 
 ```text
@@ -74,6 +74,9 @@ cat results.json | jq 'map({location: ."Bag location", violations: ."Rule violat
 # Count the number of bags that are non-compliant
 cat results.json | jq '[.[] | select(."Is compliant" == false)] | length'
 
+# Get the paths to the *deposits* containing valid bags. Note that "Bag location" is one level too deep, that's why we need to remove the 
+# last path element. The detour through to_entries seems necessary to get rid of the array structure around the results.
+cat results.json | select(."Is compliant" == true)] | map(."Bag location") | map(split("/") | .[:-1] | join("/")) | to_entries[] | "\(.value)"
 ```
 
 INSTALLATION & CONFIGURATION
