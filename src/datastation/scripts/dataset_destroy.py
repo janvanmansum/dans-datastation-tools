@@ -9,7 +9,7 @@ def main():
     parser = argparse.ArgumentParser(
         description='Destroy a published dataset. Requires dataverse.safety_latch = OFF + superadmin permissions in '
                     'Dataverse. Bulk processing NOT SUPPORTED.')
-    parser.add_argument('pid', dest='pid', help='The PID of the dataset to destroy')
+    parser.add_argument('pid', help='The PID of the dataset to destroy')
     args = parser.parse_args()
 
     safety_latch = config['dataverse']['safety_latch']
