@@ -1,4 +1,5 @@
 import argparse
+import logging
 
 from datastation.config import init
 from datastation.dv_api import destroy_dataset
@@ -17,6 +18,7 @@ def main():
     server_url = config['dataverse']['server_url']
     api_token = config['dataverse']['api_token']
     if safety_latch == "OFF":
+        logging.info("safety_latch is OFF. Destroying {}".format(pid))
         destroy_dataset(server_url, api_token, pid)
     else:
         print("safety_latch is ON. Not performing destroy.")
