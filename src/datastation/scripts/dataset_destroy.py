@@ -13,7 +13,9 @@ def main():
     parser.add_argument('pid', help='The PID of the dataset to destroy')
     args = parser.parse_args()
 
-    safety_latch = config['dataverse']['safety_latch']
+    safety_latch = True  # If no safety_latch is found, assume it is ON
+    if 'safety_latch' in config['dataverse']:
+        safety_latch = config['dataverse']['safety_latch']
     pid = args.pid
     server_url = config['dataverse']['server_url']
     api_token = config['dataverse']['api_token']
