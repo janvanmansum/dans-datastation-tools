@@ -10,7 +10,7 @@ from datastation.config import init
 
 def add_message(args, banner_url, headers, unblock):
     headers['Content-type'] = 'application/json'  # side effect!
-    data = json.dumps({
+    data = {
         "dismissibleByUser": str(args.dismissible_by_user).lower(),  # list does not return this value
         "messageTexts": [
             {
@@ -20,22 +20,22 @@ def add_message(args, banner_url, headers, unblock):
                 "message": args.message
             }
         ]
-    })
-    response = requests.post(f'{banner_url}?{unblock}', data=data, headers=headers)
+    }
+    response = requests.post(f'{banner_url}{unblock}', json=data, headers=headers)
     print(response.content)
     response.raise_for_status()
 
 
 def remove_message(args, banner_url, headers, unblock):
     for msg_id in args.ids:
-        response = requests.delete(f'{banner_url}/{msg_id}?{unblock}', headers=headers)
+        response = requests.delete(f'{banner_url}/{msg_id}{unblock}', headers=headers)
         print(response.content)
         response.raise_for_status()
 
 
 def list_messages(args, banner_url, headers, unblock):
     headers['Content-type'] = 'application/json'  # side effect!
-    response = requests.get(f'{banner_url}?{unblock}', headers=headers)
+    response = requests.get(f'{banner_url}{unblock}', headers=headers)
     response.raise_for_status()
     for row in response.json()["data"]:
         rich.print(row)
@@ -63,10 +63,12 @@ def main():
     args = parser.parse_args()
     logging.info(args)
 
-    cfg = config['dataverse']
-    headers = {'X-Dataverse-key': cfg["api_token"]}
-    unblock = f'unblock-key={cfg["unblock-key"]}'
-    banner_url = f'{cfg["server_url"]}/api/admin/bannerMessage'
+    dataverseCfg = config['dataverse']
+    headers = {'X-Dataverse-key': dataverseCfg["api_token"]}
+    unblock = ''
+    if 'unblock-key' in dataverseCfg:
+        unblock = f'?unblock-key={dataverseCfg["unblock-key"]}'
+    banner_url = f'{dataverseCfg["server_url"]}/api/admin/bannerMessage'
 
     args.func(args, banner_url, headers, unblock)
 
