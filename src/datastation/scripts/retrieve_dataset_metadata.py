@@ -42,7 +42,7 @@ def main():
 
     server_url = config['dataverse']['server_url']
     if args.pid is not None:
-        retrieve_dataset_metadata_action(server_url, args.delay, args.pid, args.output_dir)
+        retrieve_dataset_metadata_action(server_url, args.pid, args.output_dir)
     else:
         retrieve_dataset_metadata_command(server_url, args.delay, args.pids_file, args.output_dir)
 
