@@ -139,10 +139,24 @@ def get_dataset_locks(server_url, pid):
     return resp_data
 
 
-def delete_dataset_locks(server_url, api_token, pid):
+def create_dataset_lock(server_url, api_token, pid, lock_type):
+    headers = {'X-Dataverse-key': api_token}
+    dv_resp = requests.post("{}/api/datasets/:persistentId/lock/{}?persistentId={}"
+                            .format(server_url, lock_type, pid), headers=headers)
+    dv_resp.raise_for_status()
+
+
+def delete_dataset_locks_all(server_url, api_token, pid):
     headers = {'X-Dataverse-key': api_token}
     dv_resp = requests.delete(server_url + '/api/datasets/:persistentId/locks?persistentId=' + pid,
                               headers=headers)
+    dv_resp.raise_for_status()
+
+
+def delete_dataset_lock(server_url, api_token, pid, lock_type):
+    headers = {'X-Dataverse-key': api_token}
+    dv_resp = requests.delete("{}/api/datasets/:persistentId/locks?persistentId={}&type={}"
+                              .format(server_url, pid, lock_type), headers=headers)
     dv_resp.raise_for_status()
 
 
