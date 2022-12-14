@@ -1,5 +1,5 @@
 verify_dataset:
-  url: 'http://dar.dans.knaw.nl:20345'
+  url: 'http://localhost:20345'
 
 dataverse:
   api_token: your-api-token-here
