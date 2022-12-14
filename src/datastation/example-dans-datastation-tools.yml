@@ -1,7 +1,12 @@
+verify_dataset:
+  url: 'http://dar.dans.knaw.nl:20345'
+
 dataverse:
   api_token: your-api-token-here
   server_url: 'http://localhost:8080'
   files_root: your-files-root-here
+  unblock-key: changeMe
+  safety_latch: ON
   db:
     host: localhost
     dbname: dvndb
@@ -10,6 +15,24 @@ dataverse:
 
 migration_placeholders:
   description_text_pattern: '^.*Files not yet migrated to Data Station. Files for this dataset can be found at.*$'
+
+ingest_flow:
+  service_baseurl: 'http://localhost:20300'
+  deposits_mode:
+    directory: '0770'
+    file: '0660'
+  deposits_group: deposits
+  ingest_areas:
+    import:
+      inbox: '/var/opt/dans.knaw.nl/tmp/import/inbox'
+      outbox: '/var/opt/dans.knaw.nl/tmp/import/outbox'
+    migration:
+      inbox: '/var/opt/dans.knaw.nl/tmp/migration/deposits'
+      outbox: '/var/opt/dans.knaw.nl/tmp/migration/out'
+
+dans_bag_validator:
+  service_baseurl: 'http://localhost:20330'
+  default_information_package_type: MIGRATION
 
 logging:
   version: 1
