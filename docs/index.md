@@ -30,7 +30,7 @@ dv-dataset-delete-draft
 dv-dataset-destroy
 dv-dataset-publish
 dv-dataset-reindex
-dv-dataset-unlock
+dv-dataset-manage-locks
 dv-dataset-update-datacite-record
 
 #manage Banner Messages
