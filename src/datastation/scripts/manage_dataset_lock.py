@@ -9,7 +9,7 @@ from datastation.ds_pidsfile import load_pids
 from datastation.dv_api import get_dataset_locks, delete_dataset_locks_all, delete_dataset_lock, create_dataset_lock
 
 
-def dataset_lock_action(server_url, api_token, pid, action, lock_type):
+def manage_dataset_lock_action(server_url, api_token, pid, action, lock_type):
     if action == "unlock":
         if lock_type:
             delete_lock_type(server_url, api_token, pid, lock_type)
@@ -64,29 +64,45 @@ def delete_all_locks(server_url, api_token, pid):
     return deleted_locks
 
 
-def unlock_dataset_command(server_url, api_token, delay, pids_file, action, lock_type):
+def manage_dataset_locks_command(server_url, api_token, delay, pids_file, action, lock_type):
     # could be fast, but depends on number of files inside the dataset
     batch_process(load_pids(pids_file),
-                  lambda pid: dataset_lock_action(server_url, api_token, pid, action, lock_type), delay)
+                  lambda pid: manage_dataset_lock_action(server_url, api_token, pid, action, lock_type), delay)
 
 
 def main():
     config = init()
+    lock_types = ["Ingest", "Workflow", "InReview", "DcmUpload", "finalizePublication", "EditInProgress",
+                  "FileValidationFailed"]
     parser = argparse.ArgumentParser(description='Manage locks of datasets with the pids in the given input file. '
                                                  'Locking and unlocking requires superuser privileges.')
-    parser.add_argument('-a', '--action', dest='action', choices=["show", "lock", "unlock"],
-                        help="the action to be taken: lock, unlock, show")
-    parser.add_argument('-d', '--datasets', dest='pids_file', help='The input file with the dataset pids')
-    parser.add_argument('-t', '--lock-type', dest='lock_type',
-                        choices=["Ingest", "Workflow", "InReview", "DcmUpload", "finalizePublication", "EditInProgress",
-                                 "FileValidationFailed"], help='The lock type to (un)lock for the datasets')
+    subparsers = parser.add_subparsers(help='sub-command help', dest='action')
+
+    parser_show = subparsers.add_parser('show', help='show the locks on the datasets')
+    parser_lock = subparsers.add_parser('lock', help="create a lock on the datasets of the given type")
+    parser_lock.add_argument('-t', '--lock-type', dest='lock_type', choices=lock_types,
+                             help='The lock type to be created for the datasets', required=True)
+
+    parser_unlock = subparsers.add_parser('unlock', help='delete the given locktype, or all if none is provided')
+    parser_unlock.add_argument('-t', '--lock-type', dest='lock_type', choices=lock_types,
+                               help='The lock type to be deleted for the datasets',)
+    parser_group_pidargs = parser.add_mutually_exclusive_group()
+    parser_group_pidargs.add_argument('-d', '--datasets', dest='pids_file', help='The input file with the dataset pids')
+    parser_group_pidargs.add_argument('-p', '--pid', help="Doi of the dataset for which to manage the locks.")
     parser.add_argument('--delay', default=1.5, help="Delay in seconds")
+
     args = parser.parse_args()
 
     server_url = config['dataverse']['server_url']
     api_token = config['dataverse']['api_token']
 
-    unlock_dataset_command(server_url, api_token, args.delay, args.pids_file, args.action, args.lock_type)
+    chosen_lock_type = None
+    if args.action != 'show':
+        chosen_lock_type = args.lock_type
+    if args.pid is not None:
+        manage_dataset_lock_action(server_url, api_token, args.pid, args.action, chosen_lock_type)
+    else:
+        manage_dataset_locks_command(server_url, api_token, args.delay, args.pids_file, args.action, chosen_lock_type)
 
 
 if __name__ == '__main__':
