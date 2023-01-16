@@ -15,7 +15,8 @@ def main():
     args = parser.parse_args()
     service_baseurl = config['ingest_flow']['service_baseurl']
 
-    start_import(service_baseurl, args.deposit_path, args.continue_previous, is_migration=False)
+    start_import(service_baseurl, args.deposit_path, is_batch=not args.single_deposit,
+                 continue_previous=args.continue_previous, is_migration=False, is_dry_run=False)
 
 
 if __name__ == '__main__':
