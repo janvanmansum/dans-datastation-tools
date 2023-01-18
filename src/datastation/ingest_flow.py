@@ -3,6 +3,7 @@ import json
 import logging
 import os, grp
 import shutil
+from pathlib import Path
 
 import requests
 from builtins import all
@@ -64,17 +65,25 @@ def is_subpath_of(dir, parent):
     absolute_dir = os.path.abspath(dir)
     return absolute_dir.startswith(absolute_parent)
 
-# def progress_report(batch_dir, inboxes):
-#     abs_batch_dir = os.path.abspath(batch_dir)
-#     inbox = next(filter(lambda ib: is_subpath_of(abs_batch_dir, ib), inboxes), None)
-#     if inbox is None:
-#         print("ERROR: batch_dir does not seems to be in one of the inboxes: {}".format(inboxes))
-#         return 1
-#     else:
-#         relative_batch_path = abs_batch_dir.remove(inbox)
-#         outbox =
-#
-#
-#     # find the relative path (assume first dir is inbox?)
-#     #
-#     return ""
+
+def progress_report(batch_dir, ingest_areas):
+    abs_batch_dir = os.path.abspath(batch_dir)
+    ingest_area = next(filter(lambda ia: is_subpath_of(abs_batch_dir, ia['inbox']), ingest_areas), None)
+    if ingest_area is None:
+        print("ERROR: batch_dir {} does not seems to be in one of the inboxes: {}".format(batch_dir, ingest_area))
+        return 1
+    else:
+        logging.debug("Found ingest_area: {}".format(ingest_area))
+        rel_batch_dir = os.path.relpath(abs_batch_dir, ingest_area['inbox'])
+        logging.debug("Relative batch dir: {}".format(rel_batch_dir))
+        abs_out_dir = os.path.join(ingest_area['outbox'], rel_batch_dir)
+        logging.debug("Absolute out dir : {}".format(abs_out_dir))
+
+        todo = len(os.listdir(abs_batch_dir))
+        processed = len(os.listdir(os.path.join(abs_out_dir, 'processed')))
+        rejected= len(os.listdir(os.path.join(abs_out_dir, 'rejected')))
+        failed = len(os.listdir(os.path.join(abs_out_dir, 'failed')))
+
+        os.system("date")
+        print("todo = {} / processed = {} / rejected = {} / failed = {}".format(todo, processed, rejected, failed))
+        print()
