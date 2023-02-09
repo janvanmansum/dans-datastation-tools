@@ -29,9 +29,9 @@ def main():
     api_token = config['dataverse']['api_token']
 
     if args.pid is not None:
-        publish_dataset(server_url, api_token, args.delay, args.pid, args.version_upgrade_type)
+        publish_dataset(server_url, api_token, args.pid, args.version_upgrade_type)
     else:
-        publish_dataset_command(server_url, api_token, args.pids_file, args.version_upgrade_type)
+        publish_dataset_command(server_url, api_token, args.delay, args.pids_file, args.version_upgrade_type)
 
 
 if __name__ == '__main__':
