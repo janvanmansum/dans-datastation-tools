@@ -10,27 +10,32 @@ from datastation.dv_api import publish_dataset, get_dataset_metadata, change_acc
     replace_dataset_metadata
 
 
-def open_access_archeodepot(datasets_file, name_to_uri_file, dag_raporten_file, dataverse_config, dry_run, delay):
-    name_to_uri = {}
-    with open(name_to_uri_file, "r") as input_file_handler:
+def open_access_archeodepot(datasets_file, licenses_file, dag_raporten_file, dataverse_config, dry_run, delay):
+    rights_holder_to_license_uri = {}
+    with open(licenses_file, "r") as input_file_handler:
         csv_reader = csv.DictReader(input_file_handler, delimiter=',')
         for row in csv_reader:
-            name_to_uri[to_key(row["name"])] = row["url"]
-    doi_to_license_name = {}
+            rights_holder_to_license_uri[to_key(row["RIGHTS_HOLDER"])] = row["URI"]
+    doi_to_license_uri = {}
     with open(datasets_file, "r") as input_file_handler:
-        csv_reader = csv.DictReader(input_file_handler, delimiter=',')
+        csv_reader = csv.DictReader(input_file_handler, delimiter=',', fieldnames=["DOI"], restkey="rest")
         for row in csv_reader:
-            doi_to_license_name[row["DOI"]] = to_key(row["LICENSE_NAME"])
+            key = to_key(row["rest"][-1].strip())
+            uri = rights_holder_to_license_uri.get(key, "")
+            if uri:
+                doi_to_license_uri[row["DOI"]] = uri
+            else:
+                logging.warning("no license for line {}: {}".format(csv_reader.line_num, row))
     doi_to_dag_raporten = {}
     with open(dag_raporten_file, "r") as input_file_handler:
-        csv_reader = csv.DictReader(input_file_handler, delimiter=',', fieldnames=["dataset_id", "DOI"],
-                                    restkey="files")
+        csv_reader = csv.DictReader(input_file_handler, delimiter=',',
+                                    fieldnames=["dataset_id", "DOI"], restkey="files")
         next(csv_reader)
         for row in csv_reader:
             doi_to_dag_raporten[to_key(row["DOI"])] = list(filter(lambda item: item != "", row["files"]))
-    batch_process(doi_to_license_name.items(),
-                  lambda key_value: update(key_value[0],
-                                           name_to_uri[key_value[1]],
+    batch_process(doi_to_license_uri.items(),
+                  lambda key_value: update("doi:"+key_value[0],
+                                           key_value[1],
                                            doi_to_dag_raporten.get(to_key(key_value[0]), []),
                                            dry_run,
                                            dataverse_config),
@@ -48,12 +53,12 @@ def update(doi, uri, dag_raporten, dry_run, dataverse_config):
     dirty = False
     if resp_data['license']['uri'] != uri:
         dirty = True
-        json_data = '{"http://schema.org/license": "' + uri + '"}'
+        json_data = json.dumps({"http://schema.org/license": uri})
         logging.info(json_data)
         if not dry_run:
             replace_dataset_metadata(server_url, api_token, doi, json_data)
     has_dag_raporten = not dag_raporten
-    if resp_data['fileAccessRequest'] != has_dag_raporten:
+    if resp_data['fileAccessRequest'] or has_dag_raporten:
         logging.info("(re)setting access request {}".format(has_dag_raporten))
         dirty = True
         if not dry_run:
@@ -90,11 +95,11 @@ def main():
     config = init()
     parser = argparse.ArgumentParser(description='Change archeodepot dataset to open access')
     parser.add_argument('-d', '--datasets', dest='datasets',
-                        help='CSV file with: DOI, depositor(ignored), LICENSE_NAME')
+                        help='CSV file (solr query result) with DOI, ... , rights-holder.')
     parser.add_argument('-r', '--dag-raporten', dest='dag_raporten',
                         help='CSV file with: easy-id, DOI, File1, File2...')
     parser.add_argument('-l', '--licenses', dest='licenses',
-                        help='CSV file with: uri, name')
+                        help='CSV file with: uri, name. N.B. no trailing slash for the uri')
     parser.add_argument('--delay', default=5.0,
                         help="Delay in seconds (because publish is doing a lot after the async. request is returning)")
     parser.add_argument('--dry-run', dest='dry_run', action='store_true',
