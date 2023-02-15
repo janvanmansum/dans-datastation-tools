@@ -52,5 +52,7 @@ ingest-flow-start-migration="datastation.scripts.ingest_flow_start_migration:mai
 ingest-flow-start-import="datastation.scripts.ingest_flow_start_import:main"
 ingest-flow-list-events="datastation.scripts.ingest_flow_list_events:main"
 ingest-flow-progress-report="datastation.scripts.ingest_flow_progress_report:main"
+ingest-flow-block="datastation.scripts.ingest_flow_block:main"
+ingest-flow-unblock="datastation.scripts.ingest_flow_unblock:main"
 
 dans-bag-validate="datastation.scripts.validate_dans_bag:main"
