@@ -8,7 +8,8 @@ import psycopg
 
 from datastation.batch_processing import batch_process
 from datastation.config import init
-from datastation.dv_api import publish_dataset, get_dataset_metadata, change_access_request, replace_dataset_metadata
+from datastation.dv_api import publish_dataset, get_dataset_metadata, change_access_request, replace_dataset_metadata, \
+    change_file_restrict
 
 
 def open_access_archeodepot(datasets_file, licenses_file, dag_raporten_file, dataverse_config, dry_run, delay):
@@ -16,23 +17,15 @@ def open_access_archeodepot(datasets_file, licenses_file, dag_raporten_file, dat
     doi_to_dag_raporten = read_doi_to_dag_raporten(dag_raporten_file)
     server_url = dataverse_config['server_url']
     api_token = dataverse_config['api_token']
-    dvndb_conn = None
     logging.debug("is dry run: {}".format(dry_run))
-    try:
-        if not dry_run:
-            logging.debug("connecting to DB")
-            dvndb_conn = connect_to_dvndb(dataverse_config)
-        batch_process(doi_to_license_uri.items(),
-                      lambda key_value: update("doi:" + key_value[0],
-                                               key_value[1],
-                                               doi_to_dag_raporten.get(to_key(key_value[0]), []),
-                                               server_url,
-                                               api_token,
-                                               dvndb_conn),
-                      delay)
-    finally:
-        if dvndb_conn:
-            dvndb_conn.close()
+    batch_process(doi_to_license_uri.items(),
+                  lambda key_value: update("doi:" + key_value[0],
+                                           key_value[1],
+                                           doi_to_dag_raporten.get(to_key(key_value[0]), []),
+                                           server_url,
+                                           api_token,
+                                           dry_run),
+                  delay)
 
 
 def read_doi_to_license(datasets_file, rights_holder_to_license_uri):
@@ -69,73 +62,63 @@ def read_rights_holder_to_license(licenses_file):
     return rights_holder_to_license_uri
 
 
-def connect_to_dvndb(dataverse_config):
-    return psycopg.connect("host={} dbname={} user={} password={}".format(
-        dataverse_config['db']['host'],
-        dataverse_config['db']['dbname'],
-        dataverse_config['db']['user'],
-        dataverse_config['db']['password']))
-
-
 def to_key(name):
     return re.sub("[^a-zA-Z0-1]", "_", name)
 
 
-def update(doi, uri, dag_raporten, server_url, api_token, dvndb_conn):
+def update(doi, uri, dag_raporten, server_url, api_token, dry_run):
     resp_data = get_dataset_metadata(server_url, api_token, doi)
     dirty = False
     if resp_data['license']['uri'] != uri:
         dirty = True
         json_data = json.dumps({"http://schema.org/license": uri})
         logging.info(json_data)
-        if dvndb_conn:
+        if not dry_run:
             replace_dataset_metadata(server_url, api_token, doi, json_data)
-    accessible_dag_raporten = filter(
+    accessible_dag_raporten = list(filter(
         lambda file: not file['restricted'] and file_path(file) in dag_raporten,
-        resp_data['files'])
-    restricted_other_files = filter(
-        lambda file: file['restricted'] and not file_path(file) in dag_raporten,
-        resp_data['files'])
-    has_dag_raporten = not dag_raporten
-    if resp_data['fileAccessRequest'] or has_dag_raporten:
-        logging.info("(re)setting access request {}".format(has_dag_raporten))
+        resp_data['files']))
+    restricted_other_files = list(filter(
+        lambda file: file['restricted'] and file_path(file) not in dag_raporten,
+        resp_data['files']))
+    logging.info("number of: dag_raporten={}, accessible_dag_raporten={}, restricted_other_files={}; {}".format(
+        len(dag_raporten), len(accessible_dag_raporten), len(restricted_other_files), dag_raporten))
+    has_accessible_dag_raporten = len(accessible_dag_raporten) > 0
+    has_dag_raporten = len(dag_raporten) > 0
+    if bool(resp_data['fileAccessRequest']) != has_dag_raporten:
+        logging.info("(re)setting access request {}".format(has_accessible_dag_raporten))
         dirty = True
-        if dvndb_conn:
-            change_access_request(server_url, api_token, doi, json.dumps(has_dag_raporten))
-    # TODO start DB transaction
-    change_file_restrict(False, restricted_other_files, dvndb_conn)
-    if accessible_dag_raporten:
+        if not dry_run:
+            change_access_request(server_url, api_token, doi, has_dag_raporten)
+    change_files(False, restricted_other_files, server_url, api_token, dry_run)
+    if has_accessible_dag_raporten:
         if not resp_data.get("termsOfAccess", None):
             logging.warning("no terms of access, can't restrict dag-raporten of {}".format(doi))
         else:
-            change_file_restrict(True, accessible_dag_raporten, dvndb_conn)
+            change_files(True, accessible_dag_raporten, server_url, api_token, dry_run)
     logging.info('dirty = {} fileAccessRequest = {}, license = {}, rightsHolder = {}, TITLE = {}'
                  .format(dirty,
                          resp_data['fileAccessRequest'],
                          resp_data['license']['name'],
                          mdb_field_value(resp_data, 'dansRights', 'dansRightsHolder'),
                          mdb_field_value(resp_data, 'citation', 'title')))
-    if dirty and dvndb_conn:
+    if dirty and not dry_run:
         logging.info('publish_dataset')
         publish_dataset(server_url, api_token, doi, 'updatecurrent')
-    # TODO commit DB transaction (or roll back on failure?)
 
 
 def file_path(file_item):
     return re.sub("^/", "", file_item.get('directoryLabel', "") + "/" + file_item['label'])
 
 
-def change_file_restrict(value, files, dvndb_conn):
-    ids = ",".join(map(str, list(map(lambda file: file['dataFile']['id'], files))))
-    if ids:
-        q = "update datafile set restricted = {} where id in ({})".format(str(value), ids)
-        logging.info(q)
-        if dvndb_conn:
-            try:
-                dvndb_conn.execute(q)
-            except psycopg.DatabaseError:
-                logging.error("FATAL ERROR on: " + q)
-                raise
+def change_files(value, files, server_url, api_token, dry_run):
+    if len(files) > 0:
+        file_ids = list(map(lambda file: file['dataFile']['id'], files))
+        logging.info("dry_run={}; set restricted={} for ({})".format(dry_run, value, file_ids))
+        if not dry_run:
+            for id in file_ids:
+                logging.debug("updating {}".format(id))
+                change_file_restrict(server_url, api_token, id, value)
 
 
 def mdb_field_value(resp_data, metadata_block, field_name):

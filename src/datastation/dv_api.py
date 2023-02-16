@@ -237,7 +237,7 @@ def change_access_request(server_url, api_token, pid, bool):
     try:
         dv_resp = requests.put(
             server_url + '/api/access/:persistentId/allowAccessRequest?persistentId=' + pid ,
-            data=bool,
+            data=json.dumps(bool),
             headers=headers)
         dv_resp.raise_for_status()
     except requests.exceptions.RequestException as re:
@@ -253,7 +253,7 @@ def change_file_restrict(server_url, api_token, file_id, bool):
     try:
         dv_resp = requests.put(
             server_url + '/api/files/{}/restrict'.format(file_id),
-            data=bool,
+            data=json.dumps(bool),
             headers=headers)
         dv_resp.raise_for_status()
     except requests.exceptions.RequestException as re:
