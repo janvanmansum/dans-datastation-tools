@@ -84,7 +84,7 @@ def update(doi, uri, dag_raporten, server_url, api_token, dry_run):
     has_accessible_dag_raporten = len(accessible_dag_raporten) > 0
     has_dag_raporten = len(dag_raporten) > 0
     if bool(resp_data['fileAccessRequest']) != has_dag_raporten:
-        logging.info("(re)setting access request {}".format(has_accessible_dag_raporten))
+        logging.info("(re)setting access request {}".format(has_dag_raporten))
         dirty = True
         if not dry_run:
             change_access_request(server_url, api_token, doi, has_dag_raporten)
