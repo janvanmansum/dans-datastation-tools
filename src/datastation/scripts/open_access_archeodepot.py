@@ -4,8 +4,6 @@ import logging
 import csv
 import re
 
-import psycopg
-
 from datastation.batch_processing import batch_process
 from datastation.config import init
 from datastation.dv_api import publish_dataset, get_dataset_metadata, change_access_request, replace_dataset_metadata, \
@@ -116,9 +114,9 @@ def change_files(value, files, server_url, api_token, dry_run):
         file_ids = list(map(lambda file: file['dataFile']['id'], files))
         logging.info("dry_run={}; set restricted={} for ({})".format(dry_run, value, file_ids))
         if not dry_run:
-            for id in file_ids:
-                logging.debug("updating {}".format(id))
-                change_file_restrict(server_url, api_token, id, value)
+            for file_id in file_ids:
+                logging.debug("updating {}".format(file_id))
+                change_file_restrict(server_url, api_token, file_id, value)
 
 
 def mdb_field_value(resp_data, metadata_block, field_name):
@@ -131,13 +129,13 @@ def main():
     config = init()
     parser = argparse.ArgumentParser(description='Change archeodepot dataset to open access')
     parser.add_argument('-d', '--datasets', dest='datasets',
-                        help='CSV file (solr query result) with DOI, ... , rights-holder.')
+                        help='CSV file (solr query result) first column: DOI; last filled column: rights-holder')
     parser.add_argument('-r', '--dag-raporten', dest='dag_raporten',
-                        help='CSV file with: easy-id, DOI, File1, File2...')
+                        help='CSV file with: easy-id, DOI, File1, File2... N.B. The DOI is just the id, not a uri')
     parser.add_argument('-l', '--licenses', dest='licenses',
                         help='CSV file with: uri, name. N.B. no trailing slash for the uri')
     parser.add_argument('--delay', default=5.0,
-                        help="Delay in seconds (because publish is doing a lot after the async. request is returning)")
+                        help="Delay in seconds (publish does a lot after the asynchronous request is returning)")
     parser.add_argument('--dry-run', dest='dry_run', action='store_true',
                         help="only logs the actions, nothing is executed")
 
