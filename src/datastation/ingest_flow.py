@@ -32,6 +32,43 @@ def start_import(service_baseurl, path, is_batch, continue_previous, is_migratio
         r = requests.post('%s/%s/:start' % (service_baseurl, "migrations" if is_migration else "imports"), json=command)
         print('Server responded: %s' % r.text)
 
+def block_target(service_baseurl, target, is_dry_run):
+    url = '%s/blocked-targets/%s' % (service_baseurl, target,)
+
+    if is_dry_run:
+        logging.info("Only printing command, not sending it...")
+        print('Request: POST %s' % url)
+    else:
+        r = requests.post(url)
+        payload = r.json()
+
+        if 'message' not in payload:
+            print('Unexpected output format; expecting "message" property in result, not found: %s' % payload)
+
+        if r.status_code != 200:
+            print('ERROR: %s - %s' % (r.status_code, payload['message'],))
+        else:
+            print('Server responded: %s - %s' % (r.status_code, payload['message'],))
+
+def unblock_target(service_baseurl, target, is_dry_run):
+    url = '%s/blocked-targets/%s' % (service_baseurl, target,)
+
+    if is_dry_run:
+        logging.info("Only printing command, not sending it...")
+        print('Request: DELETE %s' % url)
+    else:
+        r = requests.delete(url)
+        payload = r.json()
+
+        if 'message' not in payload:
+            print('Unexpected output format; expecting "message" property in result, not found: %s' % payload)
+
+        if r.status_code != 200:
+            print('ERROR: %s - %s' % (r.status_code, payload['message'],))
+        else:
+            print('Server responded: %s - %s' % (r.status_code, payload['message'],))
+
+
 def has_file_pred(file, pred):
     return pred(file)
 
