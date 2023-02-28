@@ -232,12 +232,12 @@ def get_oai_records_resume(server_url, token):
     return xml_doc
 
 
-def change_access_request(server_url, api_token, pid, bool):
+def change_access_request(server_url, api_token, pid, makeRestricted):
     headers = {'X-Dataverse-key': api_token}
     try:
         dv_resp = requests.put(
             server_url + '/api/access/:persistentId/allowAccessRequest?persistentId=' + pid ,
-            data=json.dumps(bool),
+            data=json.dumps(makeRestricted),
             headers=headers)
         dv_resp.raise_for_status()
     except requests.exceptions.RequestException as re:
@@ -248,12 +248,12 @@ def change_access_request(server_url, api_token, pid, bool):
 # curl -H "X-Dataverse-key:$API_TOKEN" -X PUT -d true http://$SERVER/api/access/:persistentId/allowAccessRequest?persistentId={pid}
 
 
-def change_file_restrict(server_url, api_token, file_id, bool):
+def change_file_restrict(server_url, api_token, file_id, makeRestricted):
     headers = {'X-Dataverse-key': api_token}
     try:
         dv_resp = requests.put(
             server_url + '/api/files/{}/restrict'.format(file_id),
-            data=json.dumps(bool),
+            data=json.dumps(makeRestricted),
             headers=headers)
         dv_resp.raise_for_status()
     except requests.exceptions.RequestException as re:
