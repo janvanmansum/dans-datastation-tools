@@ -1,7 +1,8 @@
 import argparse
+import csv
+import datetime
 import json
 import logging
-import csv
 import re
 
 from datastation.batch_processing import batch_process
@@ -16,14 +17,28 @@ def open_access_archeodepot(datasets_file, licenses_file, keep_restricted_files,
     server_url = dataverse_config['server_url']
     api_token = dataverse_config['api_token']
     logging.debug("is dry run: {}".format(dry_run))
+    time_stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     batch_process(doi_to_license_uri.items(),
-                  lambda doi_to_license: update_license("doi:" + doi_to_license[0],
-                                                        doi_to_license[1],
-                                                        doi_to_keep_restricted.get(to_key(doi_to_license[0]), []),
-                                                        server_url,
-                                                        api_token,
-                                                        dry_run),
+                  lambda doi_to_license: update_license(
+                      "doi:" + doi_to_license[0],
+                      doi_to_license[1],
+                      doi_to_keep_restricted.get(to_key(doi_to_license[0]), []),
+                      server_url,
+                      api_token,
+                      dry_run,
+                      create_csv("datasets",
+                                 ["DOI", "Modified", "OldLicense", "NewLicense", "OldRequestEnabled",
+                                  "NewRequestEnabled"], time_stamp),
+                      create_csv("datafiles",
+                                 ["DOI", "FileID", "Modified", "OldRestricted", "NewRestricted"], time_stamp)),
                   delay)
+
+
+def create_csv(datasets, fieldnames, now):
+    file_name = "archeodepot-{}-{}.csv".format(datasets, now)
+    csv_writer = csv.DictWriter(open(file_name, 'w'), fieldnames=fieldnames)
+    csv_writer.writeheader()
+    return csv_writer
 
 
 def read_doi_to_license(datasets_file, rights_holder_to_license_uri):
@@ -64,10 +79,11 @@ def to_key(name):
     return re.sub("[^a-zA-Z0-1]", "_", name)
 
 
-def update_license(doi, uri, dag_rapporten, server_url, api_token, dry_run):
+def update_license(doi, uri, dag_rapporten, server_url, api_token, dry_run, datasets_writer, datafiles_writer):
     resp_data = get_dataset_metadata(server_url, api_token, doi)
     dirty = False
-    if resp_data['license']['uri'] != uri:
+    change_license = resp_data['license']['uri'] != uri
+    if change_license:
         dirty = True
         json_data = json.dumps({"http://schema.org/license": uri})
         logging.info(json_data)
@@ -84,16 +100,21 @@ def update_license(doi, uri, dag_rapporten, server_url, api_token, dry_run):
     has_accessible_dag_rapporten = len(accessible_dag_rapporten) > 0
     has_dag_rapporten = len(dag_rapporten) > 0
     if bool(resp_data['fileAccessRequest']) != has_dag_rapporten:
-        logging.info("(re)setting access request {}".format(has_dag_rapporten))
         dirty = True
         if not dry_run:
             change_access_request(server_url, api_token, doi, has_dag_rapporten)
-    change_file_restriction(False, restricted_other_files, server_url, api_token, dry_run)
+    datasets_writer.writerow({"DOI": doi, "Modified": dirty,
+                              "OldLicense": resp_data['license']['uri'],
+                              "NewLicense": uri,
+                              "OldRequestEnabled": resp_data['fileAccessRequest'],
+                              "NewRequestEnabled": has_dag_rapporten})
+    change_file_restriction(doi, False, restricted_other_files, server_url, api_token, datafiles_writer, dry_run)
     if has_accessible_dag_rapporten:
         if not resp_data.get("termsOfAccess", None):
             logging.warning("no terms of access, can't restrict dag-rapporten of {}".format(doi))
         else:
-            change_file_restriction(True, accessible_dag_rapporten, server_url, api_token, dry_run)
+            change_file_restriction(doi, True, accessible_dag_rapporten, server_url, api_token, datafiles_writer,
+                                    dry_run)
     logging.info('dirty = {} fileAccessRequest = {}, license = {}, rightsHolder = {}, title = {}'
                  .format(dirty,
                          resp_data['fileAccessRequest'],
@@ -109,14 +130,17 @@ def file_path(file_item):
     return re.sub("^/", "", file_item.get('directoryLabel', "") + "/" + file_item['label'])
 
 
-def change_file_restriction(restrictedValue, files, server_url, api_token, dry_run):
+def change_file_restriction(doi, restricted_value: bool, files, server_url, api_token, datafiles_writer, dry_run):
     if len(files) > 0:
         file_ids = list(map(lambda file: file['dataFile']['id'], files))
-        logging.info("dry_run={}; set restricted={} for ({})".format(dry_run, restrictedValue, file_ids))
-        if not dry_run:
-            for file_id in file_ids:
-                logging.debug("updating {}".format(file_id))
-                change_file_restrict(server_url, api_token, file_id, restrictedValue)
+        logging.info("dry_run={}; set restricted={} for ({})".format(dry_run, restricted_value, file_ids))
+        for file_id in file_ids:
+            logging.debug("updating {}".format(file_id))
+            datafiles_writer.writerow(
+                {"DOI": doi, "FileID": file_id, "Modified": True, "OldRestricted": not restricted_value,
+                 "NewRestricted": restricted_value})
+            if not dry_run:
+                change_file_restrict(server_url, api_token, file_id, restricted_value)
 
 
 def mdb_field_value(resp_data, metadata_block, field_name):

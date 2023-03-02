@@ -153,6 +153,14 @@ optional = false
 python-versions = ">=3.5"
 
 [[package]]
+name = "now"
+version = "0.0.6"
+description = "Record what you are doing SIMPLY from the command line"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "packaging"
 version = "21.3"
 description = "Core utilities for Python packages"
@@ -354,7 +362,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=4.6)", "pytest-black (
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6.8"
-content-hash = "fea76db34888b2a2fb01464350589d434bfe8c4f4e8aa5a2428139b3c378fb63"
+content-hash = "29f9819e86e34d84d6bbb7284f5f3addf2ba8ce032aa927c2bc00c77b257462d"
 
 [metadata.files]
 atomicwrites = [
@@ -500,6 +508,9 @@ lxml = [
 more-itertools = [
     {file = "more-itertools-8.14.0.tar.gz", hash = "sha256:c09443cd3d5438b8dafccd867a6bc1cb0894389e90cb53d227456b0b0bccb750"},
     {file = "more_itertools-8.14.0-py3-none-any.whl", hash = "sha256:1bc4f91ee5b1b31ac7ceacc17c09befe6a40a503907baf9c839c229b5095cfd2"},
+]
+now = [
+    {file = "now-0.0.6.tar.gz", hash = "sha256:0bc9d56c03548d383c49eb53dcefaa65c11354dd87bc35992ca46436dc2aa642"},
 ]
 packaging = [
     {file = "packaging-21.3-py3-none-any.whl", hash = "sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522"},
