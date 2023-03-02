@@ -87,7 +87,7 @@ def update_license(doi, new_license_uri, must_be_restricted, server_url, api_tok
     change_to_accessible = list(filter(
         lambda file: file['restricted'] and file_path(file) not in must_be_restricted,
         resp_data['files']))
-    logging.info("number of: must_be_restricted={}, changeTo_accessible={}, changeTo_accessible={}; {}".format(
+    logging.info("number of: must_be_restricted={}, change_to_restricted={}, change_to_accessible={}; {}".format(
         len(must_be_restricted), len(change_to_restricted), len(change_to_accessible), must_be_restricted))
     has_change_to_restricted = len(change_to_restricted) > 0
     has_must_be_restricted = len(must_be_restricted) > 0
