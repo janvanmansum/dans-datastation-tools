@@ -105,12 +105,6 @@ def update_license(doi, new_license_uri, must_be_restricted, server_url, api_tok
         if not dry_run:
             data = json.dumps({"http://schema.org/license": new_license_uri})
             replace_dataset_metadata(server_url, api_token, doi, data)
-    if dirty:
-        datasets_writer.writerow({"DOI": doi, "Modified": modified(),
-                                  "OldLicense": old_license_uri,
-                                  "NewLicense": new_license_uri,
-                                  "OldRequestEnabled": resp_data['fileAccessRequest'],
-                                  "NewRequestEnabled": has_must_be_restricted})
     dirty = change_file(doi, True, change_to_restricted, server_url, api_token, datafiles_writer, dry_run) or dirty
     dirty = change_file(doi, False, change_to_accessible, server_url, api_token, datafiles_writer, dry_run) or dirty
     logging.info('dirty = {} fileAccessRequest = {}, license = {}, rightsHolder = {}, title = {}'
@@ -119,6 +113,12 @@ def update_license(doi, new_license_uri, must_be_restricted, server_url, api_tok
                          resp_data['license']['name'],
                          mdb_field_value(resp_data, 'dansRights', 'dansRightsHolder'),
                          mdb_field_value(resp_data, 'citation', 'title')))
+    if dirty:
+        datasets_writer.writerow({"DOI": doi, "Modified": modified(),
+                                  "OldLicense": old_license_uri,
+                                  "NewLicense": new_license_uri,
+                                  "OldRequestEnabled": resp_data['fileAccessRequest'],
+                                  "NewRequestEnabled": has_must_be_restricted})
     if dirty and not dry_run:
         logging.info(doi + ' publish_dataset')
         publish_dataset(server_url, api_token, doi, 'updatecurrent')
