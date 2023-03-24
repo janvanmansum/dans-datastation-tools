@@ -15,6 +15,7 @@ dicttoxml = "^1.7.4"
 pyYAML = "^6.0"
 psycopg = "^3.0.16"
 rich = "^12.6.0"
+now = "^0.0.6"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
@@ -26,6 +27,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 dv-banner = "datastation.scripts.dv_banner:main"
+dv-open-access-archeodepot = "datastation.scripts.open_access_archeodepot:main"
 dv-dataset-oai-harvest = "datastation.scripts.oai_harvest:main"
 dv-datacite-records-update = "datastation.scripts.update_datacite_records:main"
 dv-dataset-add-role-assignment="datastation.scripts.add_role_assignments:main"

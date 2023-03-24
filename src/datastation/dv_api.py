@@ -230,3 +230,51 @@ def get_oai_records_resume(server_url, token):
     # assume XML
     xml_doc = etree.fromstring(dv_resp.content)
     return xml_doc
+
+
+def change_access_request(server_url, api_token, pid, makeRestricted):
+    headers = {'X-Dataverse-key': api_token}
+    try:
+        dv_resp = requests.put(
+            server_url + '/api/access/:persistentId/allowAccessRequest?persistentId=' + pid ,
+            data=json.dumps(makeRestricted),
+            headers=headers)
+        dv_resp.raise_for_status()
+    except requests.exceptions.RequestException as re:
+        print("RequestException: ", re)
+        raise
+    resp_data = dv_resp.json()['data']
+    return resp_data
+# curl -H "X-Dataverse-key:$API_TOKEN" -X PUT -d true http://$SERVER/api/access/:persistentId/allowAccessRequest?persistentId={pid}
+
+
+def change_file_restrict(server_url, api_token, file_id, makeRestricted):
+    headers = {'X-Dataverse-key': api_token}
+    try:
+        dv_resp = requests.put(
+            server_url + '/api/files/{}/restrict'.format(file_id),
+            data=json.dumps(makeRestricted),
+            headers=headers)
+        dv_resp.raise_for_status()
+    except requests.exceptions.RequestException as re:
+        print("RequestException: ", re)
+        raise
+    resp_data = dv_resp.json()['data']
+    return resp_data
+
+
+def replace_dataset_metadata(server_url, api_token, pid, json_data):
+    headers = {'X-Dataverse-key': api_token}
+    try:
+        dv_resp = requests.put(
+            server_url + '/api/datasets/:persistentId/metadata?persistentId=' + pid + '&replace=true',
+            data=json_data,
+            headers=headers)
+        dv_resp.raise_for_status()
+    except requests.exceptions.RequestException as re:
+        print("RequestException: ", re)
+        raise
+    resp_data = dv_resp.json()['data']
+    return resp_data
+
+
