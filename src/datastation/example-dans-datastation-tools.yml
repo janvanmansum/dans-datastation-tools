@@ -34,6 +34,9 @@ dans_bag_validator:
   service_baseurl: 'http://localhost:20330'
   default_information_package_type: MIGRATION
 
+reingest_files:
+  poll_interval_seconds: 2
+
 logging:
   version: 1
   root:
