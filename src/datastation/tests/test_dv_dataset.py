@@ -7,7 +7,7 @@ def test_FileReingester_should_call_dataset_locks():
     logger = logging.getLogger('dv_dataset')
     logger.setLevel(logging.DEBUG)
 
-    with patch('datastation.dv_dataset.DataverseRequestManager') as mock:
+    with patch('datastation.dv_dataset.DataverseAPI') as mock:
         mock.get_dataset_files.return_value = [dict(dataFile=dict(id=file_id)) for file_id in range(1, 5)]
 
         def mocked_reingest_file(file_id):
@@ -36,7 +36,7 @@ def test_FileReingester_should_call_dataset_locks():
 def test_FileReingester_should_wait_for_locks_to_resolve():
     logger = logging.getLogger('test_dv_dataset')
 
-    with patch('datastation.dv_dataset.DataverseRequestManager') as mock:
+    with patch('datastation.dv_dataset.DataverseAPI') as mock:
         mock.get_dataset_files.return_value = [dict(dataFile=dict(id=1))]
         mock.reingest_file.return_value = {'message': 'Datafile 1 queued for ingest'}
         mock.get_dataset_locks.side_effect = [

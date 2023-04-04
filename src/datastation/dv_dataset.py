@@ -5,7 +5,7 @@ import logging
 from datastation.dv_api import get_dataset_locks, reingest_file, get_dataset_files
 from typing import Optional
 
-class DataverseRequestManager:
+class DataverseAPI:
 
     def __init__(self, server_url, api_token, logger: logging.Logger):
         self.server_url = server_url
@@ -24,14 +24,14 @@ class DataverseRequestManager:
 
 class FileReingester():
 
-    def __init__(self, request_manager: DataverseRequestManager, logger: logging.Logger, poll_interval_seconds: int):
-        self.request_manager = request_manager
+    def __init__(self, dataverse_api: DataverseAPI, logger: logging.Logger, poll_interval_seconds: int):
+        self.dataverse_api = dataverse_api
         self.logger = logger
         self.poll_interval_seconds = poll_interval_seconds
 
     def reingest_dataset_tabular_files(self, pid):
         try:
-            file_list = self.request_manager.get_dataset_files(pid)
+            file_list = self.dataverse_api.get_dataset_files(pid)
 
             for dataset_file in file_list:
                 file_id = dataset_file['dataFile']['id']
@@ -48,7 +48,7 @@ class FileReingester():
         self.logger.info('[%s] Reingesting file: %s', pid, file_id)
 
         try:
-            reingest_response = self.request_manager.reingest_file(file_id)
+            reingest_response = self.dataverse_api.reingest_file(file_id)
         
             # if the ingest actually started, the message is 'Datafile 6 queued for ingest'
             message = reingest_response.get('message', '')
@@ -60,7 +60,7 @@ class FileReingester():
             self.logger.info('[%s] Reingest started: %s; waiting for dataset locks to clear', pid, message)
 
             while True:
-                locks = self.request_manager.get_dataset_locks(pid)
+                locks = self.dataverse_api.get_dataset_locks(pid)
                 self.logger.debug('[%s] Dataset is locked: %s locks present', pid, len(locks))
                             
                 if len(locks) == 0:
@@ -79,7 +79,7 @@ class FileReingester():
 def reingest_files(server_url: str, api_token: str, pid: Optional[str], pid_file: Optional[str], poll_interval_seconds: Optional[int] = 2):
     logger = logging.getLogger('dv_dataset')
 
-    manager = DataverseRequestManager(server_url, api_token, logger)
+    manager = DataverseAPI(server_url, api_token, logger)
     reingester = FileReingester(manager, logger, poll_interval_seconds=poll_interval_seconds)
 
     pids = []
