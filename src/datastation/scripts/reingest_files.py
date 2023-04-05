@@ -17,7 +17,6 @@ def main():
     api_token = config['dataverse']['api_token']
     poll_interval_seconds = int(config['reingest_files']['poll_interval_seconds'])
 
-    print(poll_interval_seconds)
     reingest_files(server_url, api_token, args.doi, args.pids_file, poll_interval_seconds)
 
 

@@ -44,37 +44,49 @@ class FileReingester():
             
             raise
 
+
     def _reingest_file(self, pid: str, file_id: str):
-        self.logger.info('[%s] Reingesting file: %s', pid, file_id)
+        self.logger.info('[%s] Checking file: %s', pid, file_id)
 
         try:
+            # the file might have been reingested in a previous run, or by some other process
+            # so we just wait for the locks to clear
+            self._wait_for_dataset_locks_to_clear(pid)
+
             reingest_response = self.dataverse_api.reingest_file(file_id)
         
             # if the ingest actually started, the message is 'Datafile 6 queued for ingest'
             message = reingest_response.get('message', '')
 
-            if 'queued for ingest' not in message:
-                self.logger.info('[%s] Reingest not started: %s', pid, message)
-                return
+            self.logger.info('[%s] Reingest started: "%s"; waiting for dataset locks to clear', pid, message)
 
-            self.logger.info('[%s] Reingest started: %s; waiting for dataset locks to clear', pid, message)
-
-            while True:
-                locks = self.dataverse_api.get_dataset_locks(pid)
-                self.logger.debug('[%s] Dataset is locked: %s locks present', pid, len(locks))
-                            
-                if len(locks) == 0:
-                    self.logger.debug('[%s] Dataset is unlocked', pid)
-                    break
-
-                time.sleep(self.poll_interval_seconds)
+            self._wait_for_dataset_locks_to_clear(pid)
             
             self.logger.info('[%s] Reingest complete for file id %s', pid, file_id)
 
         except requests.exceptions.RequestException as re:
+            # if the requests throws an exception, it might be to just tell us that the file cannot be ingested as tabular, 
+            # or some other reason that is a valid response. In that case, we just log it and move on
+            try:
+                message = re.response.json()['message']
+                self.logger.info('[%s] Reingest not completed for file id %s, reason is "%s"', pid, file_id, message)
+                return
+            except:
+                pass
+
             self.logger.debug('[%s] RequestException: %s', pid, re.response.json())
             return
 
+    def _wait_for_dataset_locks_to_clear(self, pid: str):
+        while True:
+            locks = self.dataverse_api.get_dataset_locks(pid)
+            self.logger.debug('[%s] Dataset is locked: %s locks present', pid, len(locks))
+                        
+            if len(locks) == 0:
+                self.logger.debug('[%s] Dataset is unlocked', pid)
+                break
+
+            time.sleep(self.poll_interval_seconds)
 
 def reingest_files(server_url: str, api_token: str, pid: Optional[str], pid_file: Optional[str], poll_interval_seconds: Optional[int] = 2):
     logger = logging.getLogger('dv_dataset')
