@@ -31,6 +31,9 @@ class FileReingester():
 
     def reingest_dataset_tabular_files(self, pid):
         try:
+            # the dataset might be locked, so we just wait for the locks to clear
+            self._wait_for_dataset_locks_to_clear(pid)
+
             file_list = self.dataverse_api.get_dataset_files(pid)
 
             for dataset_file in file_list:
@@ -44,15 +47,10 @@ class FileReingester():
             
             raise
 
-
     def _reingest_file(self, pid: str, file_id: str):
         self.logger.info('[%s] Checking file: %s', pid, file_id)
 
         try:
-            # the file might have been reingested in a previous run, or by some other process
-            # so we just wait for the locks to clear
-            self._wait_for_dataset_locks_to_clear(pid)
-
             reingest_response = self.dataverse_api.reingest_file(file_id)
         
             # if the ingest actually started, the message is 'Datafile 6 queued for ingest'
