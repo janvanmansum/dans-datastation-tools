@@ -3,11 +3,11 @@ import logging
 import json
 import sys
 
-from datastation.batch_processing import batch_process
-from datastation.config import init
-from datastation.ds_pidsfile import load_pids
+from main.datastation.batch_processing import batch_process
+from main.datastation.config import init
+from main.datastation.ds_pidsfile import load_pids
 
-from datastation.dv_api import replace_dataset_metadatafield, get_dataset_metadata
+from main.datastation.dv_api import replace_dataset_metadatafield, get_dataset_metadata
 
 
 def replace_metadatafield(server_url, api_token, pid, updated_field):

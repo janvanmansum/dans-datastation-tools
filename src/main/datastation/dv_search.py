@@ -2,7 +2,7 @@
 # for iteration example see: https://guides.dataverse.org/en/5.6/api/search.html#iteration
 # in a lot of cases we just want the pids and handle further processing elsewhere
 # would be nice if we could make the 'paging' logic into a generic solution 'process_search'?
-from datastation.dv_api import search
+from main.datastation.dv_api import search
 
 
 def get_dataset_pids_from_search(server_url, subtree):

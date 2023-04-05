@@ -3,8 +3,8 @@ import logging
 import os.path
 import sys
 
-from datastation.config import init
-from datastation.dv_storage import prestage_file, prestage_files, ensure_doi_directory_exists, new_file_json_data_creator
+from main.datastation.config import init
+from main.datastation.dv_storage import prestage_file, prestage_files, ensure_doi_directory_exists, new_file_json_data_creator
 
 
 def main():

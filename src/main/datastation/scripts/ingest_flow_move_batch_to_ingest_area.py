@@ -3,8 +3,8 @@ import logging
 import os.path
 import shutil
 
-from datastation.config import init
-from datastation.ingest_flow import set_permissions, is_subpath_of, is_dir_in_inbox
+from main.datastation.config import init
+from main.datastation.ingest_flow import set_permissions, is_dir_in_inbox
 
 
 def main():

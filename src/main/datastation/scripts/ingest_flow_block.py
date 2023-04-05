@@ -1,6 +1,6 @@
 import argparse
-from datastation.ingest_flow import block_target
-from datastation.config import init
+from main.datastation.ingest_flow import block_target
+from main.datastation.config import init
 
 
 def main():

@@ -2,7 +2,7 @@ import argparse
 import requests
 import json
 
-from datastation.config import init
+from main.datastation.config import init
 
 
 def main():

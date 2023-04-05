@@ -1,8 +1,8 @@
 import argparse
 import logging
 
-from datastation.config import init
-from datastation.dv_api import destroy_dataset
+from main.datastation.config import init
+from main.datastation.dv_api import destroy_dataset
 
 
 def main():

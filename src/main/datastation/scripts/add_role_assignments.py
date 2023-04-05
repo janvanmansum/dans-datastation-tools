@@ -2,11 +2,11 @@ import argparse
 import datetime
 import logging
 
-from datastation.batch_processing import batch_process
-from datastation.config import init
-from datastation.ds_pidsfile import load_pids
-from datastation.dv_api import add_dataset_role_assignment, get_dataset_roleassigments
-from datastation.open_csv_file import open_csv_file
+from main.datastation.batch_processing import batch_process
+from main.datastation.config import init
+from main.datastation.ds_pidsfile import load_pids
+from main.datastation.dv_api import add_dataset_role_assignment, get_dataset_roleassigments
+from main.datastation.open_csv_file import open_csv_file
 
 
 def add_roleassignment(server_url, api_token, csv_writer, pid, role_assignee, role_alias, dry_run):

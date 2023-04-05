@@ -2,8 +2,8 @@ import argparse
 import json
 import logging
 
-from datastation.config import init
-from datastation.dv_api import get_dataset_metadata
+from main.datastation.config import init
+from main.datastation.dv_api import get_dataset_metadata
 
 
 def retrieve_dataset_metadata_field(server_url, api_token, pid, mdb_name, field_name):

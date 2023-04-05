@@ -1,11 +1,10 @@
 import argparse
-import json
 import logging
 
 import requests
 import rich
 
-from datastation.config import init
+from main.datastation.config import init
 
 
 def add_message(args, banner_url, headers, unblock):
