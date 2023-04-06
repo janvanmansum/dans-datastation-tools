@@ -4,7 +4,7 @@ version = "0.22.0"
 description = "Command line utilities for Data Station application management"
 authors = ["DANS-KNAW"]
 packages = [
-    { include = "datastation", from = "src" }
+    { include = "datastation", from = "src/main" }
 ]
 
 [tool.poetry.dependencies]
