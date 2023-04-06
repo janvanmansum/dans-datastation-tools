@@ -295,3 +295,17 @@ def replace_dataset_metadata(server_url, api_token, pid, json_data):
     return resp_data
 
 
+class DataverseAPI:
+
+    def __init__(self, server_url, api_token):
+        self.server_url = server_url
+        self.api_token = api_token
+
+    def get_dataset_files(self, pid: str, version=':latest'):
+        return get_dataset_files(self.server_url, pid, version)
+        
+    def get_dataset_locks(self, pid: str):
+        return get_dataset_locks(self.server_url, pid)
+
+    def reingest_file(self, file_id: str):
+        return reingest_file(self.server_url, self.api_token, file_id)
