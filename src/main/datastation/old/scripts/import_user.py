@@ -6,7 +6,7 @@ import psycopg
 import requests
 import sys
 
-from datastation.config import init
+from datastation.old.config import init
 
 
 def import_user(dv_server_url, add_builtin_users_key, user, dvndb_conn, dryrun):

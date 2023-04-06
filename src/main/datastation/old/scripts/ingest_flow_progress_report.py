@@ -1,8 +1,7 @@
 import argparse
-import logging
 
-from datastation.ingest_flow import progress_report
-from datastation.config import init
+from datastation.old.ingest_flow import progress_report
+from datastation.old.config import init
 
 
 def main():

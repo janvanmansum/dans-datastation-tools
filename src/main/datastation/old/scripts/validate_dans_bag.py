@@ -10,7 +10,7 @@ import requests
 import typing
 import yaml
 
-from datastation.config import init
+from datastation.old.config import init
 from email.mime.multipart import MIMEMultipart
 
 

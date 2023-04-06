@@ -5,8 +5,8 @@ import os
 from datetime import datetime
 from lxml import etree
 
-from datastation.config import init
-from datastation.dv_api import get_oai_records, get_oai_records_resume
+from datastation.old.config import init
+from datastation.old.dv_api import get_oai_records, get_oai_records_resume
 
 
 def save_oai_records(xml_doc, counter, records_output_dir):

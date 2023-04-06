@@ -1,10 +1,10 @@
 import argparse
 import logging
 
-from datastation.batch_processing import batch_process
-from datastation.config import init
-from datastation.ds_pidsfile import load_pids
-from datastation.dv_api import get_dataset_metadata, destroy_dataset
+from datastation.old.batch_processing import batch_process
+from datastation.old.config import init
+from datastation.old.ds_pidsfile import load_pids
+from datastation.old.dv_api import get_dataset_metadata, destroy_dataset
 from re import match
 
 

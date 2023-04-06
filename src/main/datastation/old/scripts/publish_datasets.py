@@ -1,9 +1,9 @@
 import argparse
 
-from datastation.batch_processing import batch_process
-from datastation.config import init
-from datastation.ds_pidsfile import load_pids
-from datastation.dv_api import publish_dataset
+from datastation.old.batch_processing import batch_process
+from datastation.old.config import init
+from datastation.old.ds_pidsfile import load_pids
+from datastation.old.dv_api import publish_dataset
 
 
 def publish_dataset_command(server_url, api_token, delay, pids_file, version_upgrade_type):

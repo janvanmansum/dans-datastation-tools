@@ -2,11 +2,11 @@ import argparse
 import logging
 import os
 
-from datastation.batch_processing import batch_process
-from datastation.config import init
-from datastation.ds_metadatafile import store_dataset_result
-from datastation.ds_pidsfile import load_pids
-from datastation.dv_api import get_dataset_metadata_export
+from datastation.old.batch_processing import batch_process
+from datastation.old.config import init
+from datastation.old.ds_metadatafile import store_dataset_result
+from datastation.old.ds_pidsfile import load_pids
+from datastation.old.dv_api import get_dataset_metadata_export
 
 
 def retrieve_dataset_metadata_action(server_url, pid, output_dir):

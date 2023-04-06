@@ -1,9 +1,9 @@
 import argparse
 import logging
 
-from datastation.config import init
-from datastation.ds_pidsfile import store_pids
-from datastation.dv_search import get_dataset_pids_from_search
+from datastation.old.config import init
+from datastation.old.ds_pidsfile import store_pids
+from datastation.old.dv_search import get_dataset_pids_from_search
 
 
 def retrieve_dataset_pids_command(server_url, dataverse_alias, output_dir, output_filename):

@@ -2,11 +2,11 @@ import argparse
 import datetime
 import logging
 
-from datastation.batch_processing import batch_process
-from datastation.config import init
-from datastation.ds_pidsfile import load_pids
-from datastation.dv_api import delete_dataset_role_assignment, get_dataset_roleassigments
-from datastation.open_csv_file import open_csv_file
+from datastation.old.batch_processing import batch_process
+from datastation.old.config import init
+from datastation.old.ds_pidsfile import load_pids
+from datastation.old.dv_api import delete_dataset_role_assignment, get_dataset_roleassigments
+from datastation.old.open_csv_file import open_csv_file
 
 
 def delete_roleassignment(server_url, api_token, csv_writer, pid, role_assignee, role_alias, dry_run):

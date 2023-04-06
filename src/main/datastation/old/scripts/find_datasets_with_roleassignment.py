@@ -3,7 +3,7 @@ import logging
 import sys
 import psycopg
 
-from datastation.config import init
+from datastation.old.config import init
 
 
 def find_datasets_with_roleassignment(dvndb_conn, role_assignee, role_alias):

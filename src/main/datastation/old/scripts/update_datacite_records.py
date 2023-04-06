@@ -2,9 +2,9 @@ import argparse
 import requests
 import logging
 
-from datastation.batch_processing import batch_process
-from datastation.config import init
-from datastation.ds_pidsfile import load_pids
+from datastation.old.batch_processing import batch_process
+from datastation.old.config import init
+from datastation.old.ds_pidsfile import load_pids
 
 
 def modify_registration_metadata(dataverse_url, dataverse_api_token, pid):

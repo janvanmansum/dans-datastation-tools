@@ -3,16 +3,16 @@ import logging
 import os.path
 import shutil
 
-from datastation.config import init
-from datastation.ingest_flow import set_permissions, is_subpath_of, is_dir_in_inbox
+from datastation.old.config import init
+from datastation.old.ingest_flow import set_permissions, is_dir_in_inbox
 
 
 def main():
     config = init()
-    parser = argparse.ArgumentParser(description='Move a batch to an ingest area')
-    parser.add_argument('source', metavar='<source>', help='Source batch to move')
-    parser.add_argument('dest', metavar='<dest>', help='Destination to move to. If the destination does not exist it is'
-                                                       ' created and the contents of the batch is moved to it.')
+    parser = argparse.ArgumentParser(description='Copy a batch to an ingest area')
+    parser.add_argument('source', metavar='<source>', help='Source batch to copy')
+    parser.add_argument('dest', metavar='<dest>', help='Destination to copy to. If the destination does not exist it is'
+                                                       ' created and the contents of the batch is copied to it.')
     args = parser.parse_args()
 
     src = args.source
@@ -27,9 +27,10 @@ def main():
     deposits_group = config['ingest_flow']['deposits_group']
     ingest_areas = config['ingest_flow']['ingest_areas']
     inboxes = list(map(lambda a: a['inbox'], ingest_areas.values()))
+    logging.debug("Found inboxes {}".format(", ".join(inboxes)))
     if is_dir_in_inbox(dest, inboxes):
-        logging.debug("Moving from {} to {}".format(args.source, dest))
-        shutil.move(src=args.source, dst=dest)
+        logging.debug("Copying from {} to {}".format(args.source, dest))
+        shutil.copytree(src=args.source, dst=dest)
         logging.debug("Setting permissions and group...")
         set_permissions(dest, dir_mode, file_mode, deposits_group)
         logging.info("Done")

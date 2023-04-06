@@ -1,6 +1,6 @@
 import argparse
-from datastation.ingest_flow import unblock_target
-from datastation.config import init
+from datastation.old.ingest_flow import unblock_target
+from datastation.old.config import init
 
 
 def main():
