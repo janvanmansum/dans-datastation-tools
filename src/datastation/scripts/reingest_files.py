@@ -112,16 +112,15 @@ def get_pids_to_scan(pid: Optional[str], pid_file: Optional[str]) -> List[str]:
     elif pid_file is not None:
         try:
             with open(pid_file, "r") as f:
-                pids = [line.strip() for line in f]
-
+                pids = [line.strip() for line in f.readlines()]
         except FileNotFoundError as e:
             logging.error(
                 "File not found: %s (system message: %s)", pid_file, e.strerror
             )
-            return
+            raise
 
     # clear empty pids
-    return list(filter(lambda s: len(s) > 0, pids))
+    return list(filter(lambda s: len(s.strip()) > 0, pids))
 
 
 def wait_for_dataset_locks_to_clear(
