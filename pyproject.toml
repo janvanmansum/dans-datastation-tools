@@ -4,7 +4,7 @@ version = "0.22.0"
 description = "Command line utilities for Data Station application management"
 authors = ["DANS-KNAW"]
 packages = [
-    { include = "datastation", from = "src/main" }
+    { include = "datastation", from = "src" }
 ]
 
 [tool.poetry.dependencies]
@@ -17,7 +17,7 @@ psycopg = "^3.0.16"
 rich = "^12.6.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = "^6.2.5"
 psycopg_binary = "^3.0.16"
 
 [build-system]
@@ -25,32 +25,32 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-dans-bag-validate="datastation.old.scripts.validate_dans_bag:main"
+dans-bag-validate = "datastation.old.scripts.validate_dans_bag:main"
 dv-banner = "datastation.old.scripts.dv_banner:main"
 dv-datacite-records-update = "datastation.old.scripts.update_datacite_records:main"
-dv-dataset-add-role-assignment="datastation.old.scripts.add_role_assignments:main"
-dv-dataset-delete-draft="datastation.old.scripts.delete_draft_datasets:main"
-dv-dataset-delete-role-assignment="datastation.old.scripts.delete_role_assignments:main"
-dv-dataset-destroy-migration-placeholder="datastation.old.scripts.dataset_destroy_migration_placeholder:main"
-dv-dataset-destroy="datastation.old.scripts.dataset_destroy:main"
-dv-dataset-find-with-role-assignment="datastation.old.scripts.find_datasets_with_roleassignment:main"
+dv-dataset-add-role-assignment = "datastation.old.scripts.add_role_assignments:main"
+dv-dataset-delete-draft = "datastation.old.scripts.delete_draft_datasets:main"
+dv-dataset-delete-role-assignment = "datastation.old.scripts.delete_role_assignments:main"
+dv-dataset-destroy-migration-placeholder = "datastation.old.scripts.dataset_destroy_migration_placeholder:main"
+dv-dataset-destroy = "datastation.old.scripts.dataset_destroy:main"
+dv-dataset-find-with-role-assignment = "datastation.old.scripts.find_datasets_with_roleassignment:main"
 dv-dataset-locks = "datastation.old.scripts.manage_dataset_lock:main"
 dv-dataset-oai-harvest = "datastation.old.scripts.oai_harvest:main"
-dv-dataset-publish="datastation.old.scripts.publish_datasets:main"
-dv-dataset-reindex="datastation.old.scripts.reindex_datasets:main"
+dv-dataset-publish = "datastation.old.scripts.publish_datasets:main"
+dv-dataset-reindex = "datastation.old.scripts.reindex_datasets:main"
 dv-dataset-replace-metadata-field-values = "datastation.old.scripts.replace_metadata_field_values:main"
-dv-dataset-retrieve-metadata-field="datastation.old.scripts.retrieve_dataset_metadata_field:main"
-dv-dataset-retrieve-metadata="datastation.old.scripts.retrieve_dataset_metadata:main"
+dv-dataset-retrieve-metadata-field = "datastation.old.scripts.retrieve_dataset_metadata_field:main"
+dv-dataset-retrieve-metadata = "datastation.old.scripts.retrieve_dataset_metadata:main"
 dv-dataset-verify = "datastation.old.scripts.verify_dataset:main"
 dv-dataverse-oai-harvest = "datastation.old.scripts.oai_harvest:main"
-dv-dataverse-retrieve-pids="datastation.old.scripts.retrieve_dataset_pids:main"
-dv-file-prestage="datastation.old.scripts.prestage_files:main"
-dv-user-import="datastation.old.scripts.import_user:main"
-ingest-flow-block="datastation.old.scripts.ingest_flow_block:main"
-ingest-flow-copy-batch-to-ingest-area="datastation.old.scripts.ingest_flow_copy_batch_to_ingest_area:main"
-ingest-flow-list-events="datastation.old.scripts.ingest_flow_list_events:main"
-ingest-flow-move-batch-to-ingest-area="datastation.old.scripts.ingest_flow_move_batch_to_ingest_area:main"
-ingest-flow-progress-report="datastation.old.scripts.ingest_flow_progress_report:main"
-ingest-flow-start-import="datastation.old.scripts.ingest_flow_start_import:main"
-ingest-flow-start-migration="datastation.old.scripts.ingest_flow_start_migration:main"
-ingest-flow-unblock="datastation.old.scripts.ingest_flow_unblock:main"
+dv-dataverse-retrieve-pids = "datastation.old.scripts.retrieve_dataset_pids:main"
+dv-file-prestage = "datastation.old.scripts.prestage_files:main"
+dv-user-import = "datastation.old.scripts.import_user:main"
+ingest-flow-block = "datastation.old.scripts.ingest_flow_block:main"
+ingest-flow-copy-batch-to-ingest-area = "datastation.old.scripts.ingest_flow_copy_batch_to_ingest_area:main"
+ingest-flow-list-events = "datastation.old.scripts.ingest_flow_list_events:main"
+ingest-flow-move-batch-to-ingest-area = "datastation.old.scripts.ingest_flow_move_batch_to_ingest_area:main"
+ingest-flow-progress-report = "datastation.old.scripts.ingest_flow_progress_report:main"
+ingest-flow-start-import = "datastation.old.scripts.ingest_flow_start_import:main"
+ingest-flow-start-migration = "datastation.old.scripts.ingest_flow_start_migration:main"
+ingest-flow-unblock = "datastation.old.scripts.ingest_flow_unblock:main"
