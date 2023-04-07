@@ -6,26 +6,43 @@ import typing
 import yaml
 
 
+# Abstract base class for the result writers
+class ResultWriter:
+    def write(self, result: dict, is_first: bool):
+        raise NotImplementedError()
+
+    def close(self):
+        raise NotImplementedError()
+
+
 # Function that write a result in the form of a dictionary to a text stream
-class JsonResultWriter:
+class JsonResultWriter(ResultWriter):
     def __init__(self, out_stream: typing.TextIO):
         self.out_stream = out_stream
 
     def write(self, result: dict, is_first: bool):
-        if not is_first:
+        if is_first:
+            self.out_stream.write("[")
+        else:
             self.out_stream.write(", ")
         self.out_stream.write(json.dumps(result))
 
+    def close(self):
+        self.out_stream.write("]")
 
-class YamlResultWriter:
+
+class YamlResultWriter(ResultWriter):
     def __init__(self, out_stream: typing.TextIO):
         self.out_stream = out_stream
 
     def write(self, result: dict, is_first: bool):
         self.out_stream.write(yaml.dump(result))
 
+    def close(self):
+        pass
 
-class CsvResultWriter:
+
+class CsvResultWriter(ResultWriter):
     def __init__(self, headers: list, out_stream: typing.TextIO):
         self.out_stream = out_stream
         self.headers = headers
@@ -33,9 +50,11 @@ class CsvResultWriter:
         self.csv_writer.writeheader()
 
     def write(self, result: dict, is_first: bool):
-        # Check if the result has the same keys as the headers
         if len(result.keys()) > 0:
             if set(result.keys()) != set(self.headers):
                 raise ValueError("Result keys do not match headers")
             else:
                 self.csv_writer.writerow(result)
+
+    def close(self):
+        pass
