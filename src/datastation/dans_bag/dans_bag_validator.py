@@ -49,7 +49,6 @@ class DansBagValidator:
         else:
             r = requests.post('{}/validate'.format(self.server_url), data=body,
                               headers=headers)
-            print(r.text)
             if self.accept_type == 'application/json':
                 result = json.loads(r.text)
             elif self.accept_type == 'text/plain':

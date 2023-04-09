@@ -1,5 +1,7 @@
 import argparse
+import sys
 
+from datastation.common.result_writer import CsvResultWriter, JsonResultWriter, YamlResultWriter
 from src.datastation.common.config import init
 from src.datastation.dans_bag.dans_bag_validator import DansBagValidator
 
@@ -17,11 +19,18 @@ def main():
                         default='MIGRATION')
     parser.add_argument('-d', '--dry-run', dest='dry_run', action='store_true',
                         help='Only print command to be sent to server, but do not actually send it')
-    parser.add_argument('-o', '--out-file', dest='out_file',
+    parser.add_argument('-f', '--format', dest='format',
                         required=True,
-                        help='Output file to save results to. If the file name ends in .csv the output is saved as CSV,'
-                             'if .json as JSON and otherwise as Yaml')
+                        help='Output format, one of: csv, json, yaml (default: json)')
 
     args = parser.parse_args()
-    validator = DansBagValidator(config['dans_bag_validator'])
-    validator.validate(args.path, args.info_package_type, args.dry_run, args.out_file)
+    validator = DansBagValidator(config['dans_bag_validator'], dry_run=args.dry_run)
+    if args.format == 'csv':
+        result_writer = CsvResultWriter(headers=['DEPOSIT', 'BAG', 'COMPLIANT', 'RULE VIOLATIONS'],
+                                        out_stream=sys.stdout)
+    elif args.format == 'yaml':
+        result_writer = YamlResultWriter(out_stream=sys.stdout)
+    else:
+        result_writer = JsonResultWriter(out_stream=sys.stdout)
+
+    validator.validate(args.path, args.info_package_type, result_writer)
