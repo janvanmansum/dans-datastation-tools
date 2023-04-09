@@ -18,16 +18,20 @@ class ResultWriter:
 # Function that write a result in the form of a dictionary to a text stream
 class JsonResultWriter(ResultWriter):
     def __init__(self, out_stream: typing.TextIO):
+        self.first_result_written = False
         self.out_stream = out_stream
 
     def write(self, result: dict, is_first: bool):
         if is_first:
             self.out_stream.write("[")
+            self.first_result_written = True
         else:
             self.out_stream.write(", ")
         self.out_stream.write(json.dumps(result))
 
     def close(self):
+        if not self.first_result_written:
+            self.out_stream.write("[")
         self.out_stream.write("]")
 
 

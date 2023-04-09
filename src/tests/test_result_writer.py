@@ -39,6 +39,12 @@ class TestJsonResultWriter:
         writer.close()
         assert out_stream.getvalue() == '[{"a": 1, "b": 2}]'
 
+    def test_closes_array_if_no_results(self):
+        out_stream = StringIO()
+        writer = JsonResultWriter(out_stream)
+        writer.close()
+        assert out_stream.getvalue() == '[]'
+
 
 class TestYamlResultWriter:
 

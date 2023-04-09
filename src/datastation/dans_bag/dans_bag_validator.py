@@ -14,14 +14,14 @@ from datastation.common.result_writer import ResultWriter
 
 class DansBagValidator:
     def __init__(self, config: dict, accept_type: str = 'application/json', dry_run: bool = False):
-        self.server_url = config['service_base_url']
+        self.server_url = config['service_baseurl']
         self.accept_type = accept_type
         self.dry_run = dry_run
 
     def validate(self, path: str, info_package_type: str, result_writer: ResultWriter):
         try:
             is_first = True
-            for bag in find_bags(path):
+            for bag in find_bags(path, max_depth=2):
                 self.validate_dans_bag(bag, info_package_type, result_writer, is_first)
                 is_first = False
         finally:

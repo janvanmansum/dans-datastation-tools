@@ -25,7 +25,7 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-dans-bag-validate = "datastation.old.scripts.validate_dans_bag:main"
+dans-bag-validate = "datastation.dans_bag_validate:main"
 dv-banner = "datastation.old.scripts.dv_banner:main"
 dv-datacite-records-update = "datastation.old.scripts.update_datacite_records:main"
 dv-dataset-add-role-assignment = "datastation.old.scripts.add_role_assignments:main"

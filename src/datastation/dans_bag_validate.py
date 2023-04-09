@@ -20,7 +20,6 @@ def main():
     parser.add_argument('-d', '--dry-run', dest='dry_run', action='store_true',
                         help='Only print command to be sent to server, but do not actually send it')
     parser.add_argument('-f', '--format', dest='format',
-                        required=True,
                         help='Output format, one of: csv, json, yaml (default: json)')
 
     args = parser.parse_args()
