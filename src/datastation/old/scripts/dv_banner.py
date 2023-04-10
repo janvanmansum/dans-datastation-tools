@@ -20,6 +20,10 @@ def add_message(args, banner_url, headers, unblock):
             }
         ]
     }
+
+    print(headers)
+    print(data)
+
     response = requests.post(f'{banner_url}{unblock}', json=data, headers=headers)
     print(response.content)
     response.raise_for_status()
@@ -63,6 +67,7 @@ def main():
     logging.info(args)
 
     dataverseCfg = config['dataverse']
+    print(dataverseCfg)
     headers = {'X-Dataverse-key': dataverseCfg["api_token"]}
     unblock = ''
     if 'unblock-key' in dataverseCfg:

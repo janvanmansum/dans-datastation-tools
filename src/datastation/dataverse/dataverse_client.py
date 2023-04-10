@@ -12,3 +12,6 @@ class DataverseClient:
 
     def banner(self):
         return Banner(self.server_url, self.api_token, self.unblock_key, self.dry_run)
+
+    def set_dry_run(self, dry_run):
+        self.dry_run = dry_run
