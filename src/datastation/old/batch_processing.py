@@ -11,6 +11,7 @@ def batch_process(pids, process_action_func, delay=0.1, fail_on_first_error=True
         num += 1
         logging.info("[{} of {}] Processing dataset with pid: {}".format(num, num_pids, pid))
         try:
+            logging.info(f"Processing dataset with pid: {pid}")
             process_action_func(pid)
         except Exception as e:
             logging.exception("Exception occurred", exc_info=True)
