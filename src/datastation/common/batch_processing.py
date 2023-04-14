@@ -3,6 +3,8 @@ import time
 
 import os
 
+from datastation.common.csv_report import CsvReport
+
 
 def get_pids(pid_or_file):
     if os.path.isfile(os.path.expanduser(pid_or_file)):
@@ -42,3 +44,20 @@ class BatchProcessor:
                     logging.error(f"Stop processing because of an exception: {e}")
                     break
                 logging.debug("fail_on_first_error is False, continuing...")
+
+
+class BatchProcessorWithReport(BatchProcessor):
+
+    def __init__(self, report_file=None, headers=None, delay=0.1, fail_on_first_error=True):
+        super().__init__(delay, fail_on_first_error)
+        if headers is None:
+            headers = ["DOI", "Modified", "Change"]
+        self.report_file = report_file
+        self.headers = headers
+
+    def set_report_file(self, report_file):
+        self.report_file = report_file
+
+    def process_pids(self, pids, callback):
+        with CsvReport(os.path.expanduser(self.report_file), self.headers) as csv_report:
+            super().process_pids(pids, lambda pid: callback(pid, csv_report))

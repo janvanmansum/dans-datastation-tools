@@ -1,25 +1,20 @@
 import argparse
-import os
 from datetime import datetime
 
 import rich
 
-from datastation.common.batch_processing import get_pids, BatchProcessor
+from datastation.common.batch_processing import get_pids, BatchProcessor, BatchProcessorWithReport
 from datastation.common.config import init
-from datastation.common.csv_report import CsvReport
 from datastation.dataverse.dataset_api import DatasetApi
-
 from datastation.dataverse.dataverse_client import DataverseClient
 
 
 def add_role_assignments(args, dataverse_client: DataverseClient, batch_processor: BatchProcessor):
     pids = get_pids(args.pid_or_pid_file)
-    headers = ["DOI", "Modified", "Assignee", "Role", "Change"]
-    with CsvReport(os.path.expanduser(args.report_file), headers) as csv_report:
-        batch_processor.process_pids(pids,
-                                     lambda pid: add_role_assignment(args.role_assignment,
-                                                                     dataset_api=dataverse_client.dataset(pid),
-                                                                     csv_report=csv_report))
+    batch_processor.process_pids(pids,
+                                 lambda pid, csv_report: add_role_assignment(args.role_assignment,
+                                                                             dataset_api=dataverse_client.dataset(pid),
+                                                                             csv_report=csv_report))
 
 
 def add_role_assignment(role_assignment, dataset_api: DatasetApi, csv_report):
@@ -57,12 +52,11 @@ def list_role_assignments(args, dataverse_client):
 
 def remove_role_assignments(args, dataverse_client: DataverseClient, batch_processor: BatchProcessor):
     pids = get_pids(args.pid_or_pid_file)
-    headers = ["DOI", "Modified", "Assignee", "Role", "Change"]
-    with CsvReport(os.path.expanduser(args.report_file), headers) as csv_report:
-        batch_processor.process_pids(pids,
-                                     lambda pid: remove_role_assignment(args.role_assignment,
-                                                                        dataset_api=dataverse_client.dataset(pid),
-                                                                        csv_report=csv_report))
+    batch_processor.process_pids(pids,
+                                 lambda pid, csv_report: remove_role_assignment(args.role_assignment,
+                                                                                dataset_api=dataverse_client.dataset(
+                                                                                    pid),
+                                                                                csv_report=csv_report))
 
 
 def remove_role_assignment(role_assignment, dataset_api: DatasetApi, csv_report):
@@ -87,7 +81,7 @@ def remove_role_assignment(role_assignment, dataset_api: DatasetApi, csv_report)
 def main():
     config = init()
     dataverse_client = DataverseClient(config['dataverse'])
-    batch_processor = BatchProcessor()
+    batch_processor = BatchProcessorWithReport(headers=['DOI', 'Modified', 'Assignee', 'Role', 'Change'])
 
     parser = argparse.ArgumentParser(description='Manage role assignments on one or more datasets')
     parser.add_argument('-d', '--dry-run', dest='dry_run', help="only logs the actions, nothing is executed",
@@ -123,7 +117,12 @@ def main():
     parser_list.set_defaults(func=lambda _: list_role_assignments(_, dataverse_client))
 
     args = parser.parse_args()
+
+    # Prepare the batch processor and the dataverse client
     dataverse_client.set_dry_run(args.dry_run)
     batch_processor.set_delay(args.sleep)
     batch_processor.set_fail_on_first_error(args.fail_fast)
+    batch_processor.set_report_file(args.report_file)
+
+    # Execute the command
     args.func(args)
