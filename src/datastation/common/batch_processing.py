@@ -5,9 +5,9 @@ import os
 
 
 def get_pids(pid_or_file):
-    if os.path.isfile(pid_or_file):
+    if os.path.isfile(os.path.expanduser(pid_or_file)):
         pids = []
-        with open(pid_or_file) as f:
+        with open(os.path.expanduser(pid_or_file)) as f:
             for line in f:
                 pids.append(line.strip())
         return pids

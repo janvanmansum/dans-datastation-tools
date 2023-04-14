@@ -1,5 +1,5 @@
-from datastation.dataverse.banner import Banner
-from datastation.dataverse.dataset import Dataset
+from datastation.dataverse.banner_api import BannerApi
+from datastation.dataverse.dataset_api import DatasetApi
 
 
 class DataverseClient:
@@ -15,7 +15,7 @@ class DataverseClient:
         self.dry_run = dry_run
 
     def banner(self):
-        return Banner(self.server_url, self.api_token, self.unblock_key, self.dry_run)
+        return BannerApi(self.server_url, self.api_token, self.unblock_key, self.dry_run)
 
     def dataset(self, pid):
-        return Dataset(pid, self.server_url, self.api_token, self.unblock_key, self.dry_run)
+        return DatasetApi(pid, self.server_url, self.api_token, self.unblock_key, self.dry_run)

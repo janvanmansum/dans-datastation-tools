@@ -4,7 +4,7 @@ import logging
 import requests
 
 
-class Banner:
+class BannerApi:
 
     def __init__(self, server_url: str, api_token: str, unblock_key: str, dry_run: bool = False):
         self.server_url = server_url
