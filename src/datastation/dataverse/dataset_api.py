@@ -53,3 +53,29 @@ class DatasetApi:
             r = requests.delete(url, headers=headers, params=params)
         r.raise_for_status()
         return r
+
+    def is_draft(self):
+        url = f'{self.server_url}/api/datasets/:persistentId'
+        params = {'persistentId': self.pid}
+        headers = {'X-Dataverse-key': self.api_token}
+        if self.dry_run:
+            print("Only printing command, not sending it...")
+            print(f"GET {url}")
+            return None
+        else:
+            r = requests.get(url, headers=headers, params=params)
+        r.raise_for_status()
+        return r.json()['data']['latestVersion']['versionState'] == 'DRAFT'
+
+    def delete_draft(self):
+        url = f'{self.server_url}/api/datasets/:persistentId'
+        params = {'persistentId': self.pid}
+        headers = {'X-Dataverse-key': self.api_token}
+        if self.dry_run:
+            print("Only printing command, not sending it...")
+            print(f"DELETE {url}")
+            return None
+        else:
+            r = requests.delete(url, headers=headers, params=params)
+        r.raise_for_status()
+        return r.json()
