@@ -1,6 +1,7 @@
 import argparse
-from src.datastation.old.ingest_flow import list_events
+
 from src.datastation.old.config import init
+from src.datastation.old.ingest_flow import list_events
 
 
 def main():

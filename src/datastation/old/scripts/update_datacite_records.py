@@ -1,6 +1,7 @@
 import argparse
-import requests
 import logging
+
+import requests
 
 from src.datastation.old.batch_processing import batch_process
 from src.datastation.old.config import init

@@ -1,6 +1,7 @@
 import argparse
-import requests
 import json
+
+import requests
 
 from src.datastation.old.config import init
 

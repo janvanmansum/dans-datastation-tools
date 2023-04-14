@@ -1,6 +1,7 @@
 import argparse
-from src.datastation.old.ingest_flow import start_import
+
 from src.datastation.old.config import init
+from src.datastation.old.ingest_flow import start_import
 
 
 def main():

@@ -1,11 +1,11 @@
+import hashlib
 import json
 import logging
 import os.path
-from uuid import uuid4
 from datetime import datetime
 from os import walk, path
 from shutil import copy
-import hashlib
+from uuid import uuid4
 
 
 # Taken from edu.harvard.iq.dataverse.DataFileServiceBean#generateStorageIdentifier()

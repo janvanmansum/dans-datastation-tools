@@ -1,12 +1,11 @@
 import argparse
-import logging
 import json
+import logging
 import sys
 
 from src.datastation.old.batch_processing import batch_process
 from src.datastation.old.config import init
 from src.datastation.old.ds_pidsfile import load_pids
-
 from src.datastation.old.dv_api import replace_dataset_metadatafield, get_dataset_metadata
 
 

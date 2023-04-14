@@ -1,12 +1,12 @@
 import argparse
-import logging
 import json
+import logging
 
 from src.datastation.old.batch_processing import batch_process
 from src.datastation.old.config import init
 from src.datastation.old.ds_pidsfile import load_pids
-
-from src.datastation.old.dv_api import get_dataset_locks, delete_dataset_locks_all, delete_dataset_lock, create_dataset_lock
+from src.datastation.old.dv_api import get_dataset_locks, delete_dataset_locks_all, delete_dataset_lock, \
+    create_dataset_lock
 
 
 def manage_dataset_lock_action(server_url, api_token, pid, action, lock_type):

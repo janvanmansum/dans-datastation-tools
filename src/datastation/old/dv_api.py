@@ -1,7 +1,6 @@
 import json
 
 import requests
-
 from lxml import etree
 
 

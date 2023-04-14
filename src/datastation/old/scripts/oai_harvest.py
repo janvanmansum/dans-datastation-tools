@@ -1,8 +1,8 @@
 import argparse
 import logging
 import os
-
 from datetime import datetime
+
 from lxml import etree
 
 from src.datastation.old.config import init

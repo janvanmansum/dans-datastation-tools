@@ -4,7 +4,8 @@ import os.path
 import sys
 
 from src.datastation.old.config import init
-from src.datastation.old.dv_storage import prestage_file, prestage_files, ensure_doi_directory_exists, new_file_json_data_creator
+from src.datastation.old.dv_storage import prestage_file, prestage_files, ensure_doi_directory_exists, \
+    new_file_json_data_creator
 
 
 def main():

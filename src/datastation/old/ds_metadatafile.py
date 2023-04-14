@@ -1,9 +1,9 @@
 import json
 import os
 
+import dicttoxml
 # Start - XML related stuff, maybe not needed
 from lxml import etree
-import dicttoxml
 
 
 # check if we can also write xml instead of json!

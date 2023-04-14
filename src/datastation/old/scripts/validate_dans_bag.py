@@ -1,17 +1,17 @@
 import argparse
+import csv
 import json
 import logging
 import os
-import csv
+import typing
 from email import encoders
 from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
 
 import requests
-import typing
 import yaml
 
 from src.datastation.old.config import init
-from email.mime.multipart import MIMEMultipart
 
 
 def validate_dans_bag(path, package_type, validator_url, accept_json, is_dry_run, output_writer, is_first=True):

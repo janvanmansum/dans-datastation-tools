@@ -1,6 +1,7 @@
 import argparse
 import logging
 import sys
+
 import psycopg
 
 from src.datastation.old.config import init

@@ -1,9 +1,10 @@
-import os
-from os.path import exists
-import yaml
-from pkgutil import get_data
-from logging import config as logconfig
 import logging
+import os
+from logging import config as logconfig
+from os.path import exists
+from pkgutil import get_data
+
+import yaml
 
 configuration_file = '.dans-datastation-tools.yml'
 example_configuration_file = 'example-dans-datastation-tools.yml'

@@ -5,11 +5,12 @@ import requests
 
 class DatasetApi:
 
-    def __init__(self, pid, server_url, api_token, unblock_key, dry_run):
+    def __init__(self, pid, server_url, api_token, unblock_key, safety_latch, dry_run):
         self.pid = pid
         self.server_url = server_url
         self.api_token = api_token
         self.unblock_key = unblock_key
+        self.safety_latch = safety_latch
         self.dry_run = dry_run
 
     def get_pid(self):
@@ -77,5 +78,23 @@ class DatasetApi:
             return None
         else:
             r = requests.delete(url, headers=headers, params=params)
+        r.raise_for_status()
+        return r.json()
+
+    def destroy(self):
+        url = f'{self.server_url}/api/datasets/:persistentId/destroy'
+        headers = {'X-Dataverse-key': self.api_token}
+        params = {'persistentId': self.pid, 'unblockKey': self.unblock_key}
+
+        if self.safety_latch:
+            print("Safety latch is on, not sending command...")
+            return None
+        else:
+            if self.dry_run:
+                print("Only printing command, not sending it...")
+                print(f"DELETE {url}")
+                return None
+            else:
+                r = requests.delete(url, headers=headers, params=params)
         r.raise_for_status()
         return r.json()

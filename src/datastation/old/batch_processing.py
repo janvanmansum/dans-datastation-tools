@@ -1,5 +1,5 @@
-import time
 import logging
+import time
 
 
 def batch_process(pids, process_action_func, delay=0.1, fail_on_first_error=True):

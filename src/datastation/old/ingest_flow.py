@@ -1,13 +1,11 @@
-import argparse
 import json
 import logging
-import os, grp
+import os
 import shutil
-from pathlib import Path
+import stat
+from builtins import all
 
 import requests
-from builtins import all
-import stat
 
 file_writeable_to_group = lambda f: os.stat(f).st_mode & stat.S_IWGRP > 0
 

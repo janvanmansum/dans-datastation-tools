@@ -2,9 +2,10 @@ import argparse
 import csv
 import json
 import logging
+import sys
+
 import psycopg
 import requests
-import sys
 
 from src.datastation.old.config import init
 

@@ -1,11 +1,11 @@
 import argparse
 import logging
+from re import match
 
 from src.datastation.old.batch_processing import batch_process
 from src.datastation.old.config import init
 from src.datastation.old.ds_pidsfile import load_pids
 from src.datastation.old.dv_api import get_dataset_metadata, destroy_dataset
-from re import match
 
 
 def description_object_matches(description_text_pattern):

@@ -1,6 +1,6 @@
-import sys
 import argparse
 import logging
+import sys
 
 from src.datastation.old.batch_processing import batch_process
 from src.datastation.old.config import init

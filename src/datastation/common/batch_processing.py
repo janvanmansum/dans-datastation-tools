@@ -1,7 +1,6 @@
 import logging
-import time
-
 import os
+import time
 
 from datastation.common.csv_report import CsvReport
 
