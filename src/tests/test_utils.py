@@ -1,6 +1,6 @@
 import os
 
-from datastation.common.utils import is_sub_path_of
+from datastation.common.utils import is_sub_path_of, has_dirtree_pred, set_permissions
 
 
 class TestIsSubPathOf:
@@ -49,3 +49,44 @@ class TestIsSubPathOf:
         child = parent.mkdir('child')
         os.chdir(parent)
         assert is_sub_path_of(os.path.abspath(child), '.')
+
+
+class TestHasDirtreePred:
+
+    def test_returns_true_if_all_files_and_dirs_satisfy_pred(self, tmpdir):
+        parent = tmpdir.mkdir('parent')
+        parent.mkdir('subdir')
+        parent.join('file').write('test')
+        assert has_dirtree_pred(parent, lambda x: True)
+
+    def test_returns_false_if_any_file_or_dir_does_not_satisfy_pred(self, tmpdir):
+        parent = tmpdir.mkdir('parent')
+        parent.mkdir('subdir')
+        parent.join('file').write('test')
+        # One file does not satisfy the predicate
+        assert not has_dirtree_pred(parent, lambda x: x != parent.join('file').strpath)
+
+    def test_returns_false_if_any_dir_does_not_satisfy_pred(self, tmpdir):
+        parent = tmpdir.mkdir('parent')
+        subdir = parent.mkdir('subdir')
+        parent.join('file').write('test')
+        # One directory does not satisfy the predicate
+        assert not has_dirtree_pred(parent, lambda x: x != subdir.strpath)
+
+
+class TestSetPermissions:
+
+    def test_sets_permissions_of_all_files_and_dirs(self, tmpdir):
+        # Look up the group of the current user, so that we can set the group, as we cannot be sure that we have
+        # permissions to set the group to root.
+        group = os.stat(tmpdir.strpath).st_gid
+        parent = tmpdir.mkdir('parent')
+        parent.mkdir('subdir')
+        parent.join('file').write('test')
+        set_permissions(parent, file_mode=0o666, dir_mode=0o777, group=group)
+        for root, dirs, files in os.walk(parent.strpath):
+            assert oct(os.stat(root).st_mode)[-3:] == '777'
+            for d in dirs:
+                assert oct(os.stat(os.path.join(root, d)).st_mode)[-3:] == '777'
+            for f in files:
+                assert oct(os.stat(os.path.join(root, f)).st_mode)[-3:] == '666'
