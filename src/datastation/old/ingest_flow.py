@@ -9,13 +9,16 @@ import requests
 
 file_writeable_to_group = lambda f: os.stat(f).st_mode & stat.S_IWGRP > 0
 
+
 def start_import(service_baseurl, path, is_batch, continue_previous, is_migration, is_dry_run):
     if not has_dirtree_pred(path, file_writeable_to_group):
         chmod_command = "chmod -R g+w %s" % path
-        print("Some files in the import batch do not give the owner group write permissions. Executing '%s' to fix it" % chmod_command)
+        print(
+            "Some files in the import batch do not give the owner group write permissions. Executing '%s' to fix it" % chmod_command)
         status = os.system(chmod_command)
         if status != 0:
-            print("Could not give owner group write permissions. Possibly your account is not the owner user of the files.")
+            print(
+                "Could not give owner group write permissions. Possibly your account is not the owner user of the files.")
             return
     print("Sending start import request to server...")
     command = {
@@ -29,6 +32,7 @@ def start_import(service_baseurl, path, is_batch, continue_previous, is_migratio
     else:
         r = requests.post('%s/%s/:start' % (service_baseurl, "migrations" if is_migration else "imports"), json=command)
         print('Server responded: %s' % r.text)
+
 
 def block_target(service_baseurl, target, is_dry_run):
     url = '%s/blocked-targets/%s' % (service_baseurl, target,)
@@ -47,6 +51,7 @@ def block_target(service_baseurl, target, is_dry_run):
             print('ERROR: %s - %s' % (r.status_code, payload['message'],))
         else:
             print('Server responded: %s - %s' % (r.status_code, payload['message'],))
+
 
 def unblock_target(service_baseurl, target, is_dry_run):
     url = '%s/blocked-targets/%s' % (service_baseurl, target,)
@@ -70,15 +75,18 @@ def unblock_target(service_baseurl, target, is_dry_run):
 def has_file_pred(file, pred):
     return pred(file)
 
+
 def has_dirtree_pred(dir, pred):
     for root, dirs, files in os.walk(dir):
         return pred(root) \
-               and all(pred(os.path.join(root, dir)) for dir in dirs) \
-               and all(pred(os.path.join(root, file)) for file in files)
+            and all(pred(os.path.join(root, dir)) for dir in dirs) \
+            and all(pred(os.path.join(root, file)) for file in files)
+
 
 def list_events(service_baseurl, params):
     r = requests.get('%s/events' % service_baseurl, headers={'Accept': 'text/csv'}, params=params)
     print(r.text)
+
 
 def set_permissions(dir, dir_mode, file_mode, group):
     for root, dirs, files in os.walk(dir):
@@ -92,8 +100,10 @@ def set_permissions(dir, dir_mode, file_mode, group):
             os.chmod(p, file_mode)
             shutil.chown(p, group=group)
 
+
 def is_dir_in_inbox(dir, inboxes):
-    return next(filter(lambda p: is_subpath_of(dir, p),  inboxes), None) is not None
+    return next(filter(lambda p: is_subpath_of(dir, p), inboxes), None) is not None
+
 
 def is_subpath_of(dir, parent):
     absolute_parent = os.path.abspath(parent)
@@ -116,7 +126,7 @@ def progress_report(batch_dir, ingest_areas):
 
         todo = len(os.listdir(abs_batch_dir))
         processed = len(os.listdir(os.path.join(abs_out_dir, 'processed')))
-        rejected= len(os.listdir(os.path.join(abs_out_dir, 'rejected')))
+        rejected = len(os.listdir(os.path.join(abs_out_dir, 'rejected')))
         failed = len(os.listdir(os.path.join(abs_out_dir, 'failed')))
 
         os.system("date")
