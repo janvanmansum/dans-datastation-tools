@@ -83,21 +83,21 @@ def main():
     dataverse_client = DataverseClient(config['dataverse'])
     batch_processor = BatchProcessorWithReport(headers=['DOI', 'Modified', 'Assignee', 'Role', 'Change'])
 
-    parser = argparse.ArgumentParser(description='Manage role assignments on one or more datasets')
+    parser = argparse.ArgumentParser(description='manage role assignments on one or more datasets')
     parser.add_argument('-d', '--dry-run', dest='dry_run', help="only logs the actions, nothing is executed",
                         action='store_true')
     parser.add_argument('-s', '--sleep', dest='sleep', help="sleep time between requests", type=int, default=0)
-    parser.add_argument('-f', '-fail-fast', dest='fail_fast', help="stop on first error", action='store_true')
+    parser.add_argument('-f', '--fail-fast', dest='fail_fast', help="stop on first error", action='store_true')
+    parser.add_argument('-r', '--report', required=True, dest='report_file',
+                        help='destination of the output report file, "-" sends it to stdout')
 
-    subparsers = parser.add_subparsers(help='sub-command help', dest='subcommand')
+    subparsers = parser.add_subparsers(help='subcommands', dest='subcommand')
 
     # Add role assignment
-    parser_add = subparsers.add_parser('add', help='Add role assignment to specified dataset(s)')
+    parser_add = subparsers.add_parser('add', help='add role assignment to specified dataset(s)')
     parser_add.add_argument('-a', '--role-assignment', dest='role_assignment',
-                            help='Role assignee and alias (example: @dataverseAdmin=contributor)')
-    parser_add.add_argument('-r', '--report', required=True, dest='report_file',
-                            help='Destination of the output report file, "-" sends it to stdout')
-    parser_add.add_argument('pid_or_pid_file', help='The dataset pid or the input file with the dataset pids')
+                            help='role assignee and alias (example: @dataverseAdmin=contributor)')
+    parser_add.add_argument('pid_or_pid_file', help='the dataset pid or the input file with the dataset pids')
     parser_add.set_defaults(func=lambda _: add_role_assignments(_, dataverse_client, batch_processor))
 
     # Remove role assignment
@@ -112,8 +112,8 @@ def main():
 
     # List role assignments
     parser_list = subparsers.add_parser('list',
-                                        help='List role assignments for specified dataset (only one pid allowed)')
-    parser_list.add_argument('pid', help='The dataset pid')
+                                        help='list role assignments for specified dataset (only one pid allowed)')
+    parser_list.add_argument('pid', help='the dataset pid')
     parser_list.set_defaults(func=lambda _: list_role_assignments(_, dataverse_client))
 
     args = parser.parse_args()

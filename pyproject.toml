@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dans-datastation-tools"
-version = "0.22.0"
+version = "0.25.0"
 description = "Command line utilities for Data Station application management"
 authors = ["DANS-KNAW"]
 packages = [
@@ -8,16 +8,16 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6.8"
-requests = "^2.26.0"
+python = "^3.9"
+requests = "^2.28.2"
 lxml = "^4.8.0"
 dicttoxml = "^1.7.4"
 pyYAML = "^6.0"
-psycopg = "^3.0.16"
-rich = "^12.6.0"
+psycopg = "^3.1.8"
+rich = "^13.3.4"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.5"
+pytest = "^7.3.1"
 psycopg_binary = "^3.0.16"
 
 [build-system]
@@ -30,7 +30,7 @@ dv-banner = "datastation.dv_banner:main"
 dv-datacite-records-update = "datastation.old.scripts.update_datacite_records:main"
 dv-dataset-role-assignment = "datastation.dv_dataset_role_assignment:main"
 dv-dataset-delete-draft = "datastation.dv_dataset_delete_draft:main"
-dv-dataset-destroy-migration-placeholder = "datastation.old.scripts.dataset_destroy_migration_placeholder:main"
+dv-dataset-destroy-migration-placeholder = "datastation.dv_dataset_destroy_migration_placeholder:main"
 dv-dataset-destroy = "datastation.dv_dataset_destroy:main"
 dv-dataset-find-with-role-assignment = "datastation.old.scripts.find_datasets_with_roleassignment:main"
 dv-dataset-locks = "datastation.old.scripts.manage_dataset_lock:main"

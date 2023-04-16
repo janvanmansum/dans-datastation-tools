@@ -6,17 +6,18 @@ from datastation.common.config import init
 from datastation.dataverse.dataverse_client import DataverseClient
 
 
-def destroy_datasets(args, dataverse_client: DataverseClient, batch_processor: BatchProcessor):
+def destroy_datasets(args, dataverse_client: DataverseClient, batch_processor: BatchProcessor, dry_run: bool):
     pids = get_pids(args.pid_or_pid_file)
     batch_processor.process_pids(pids, lambda pid, csv_report: destroy_dataset(pid,
                                                                                dataset_api=dataverse_client.dataset(
                                                                                    pid),
-                                                                               csv_report=csv_report))
+                                                                               csv_report=csv_report,
+                                                                               dry_run=dry_run))
 
 
-def destroy_dataset(pid, dataset_api, csv_report):
+def destroy_dataset(pid, dataset_api, csv_report, dry_run: bool):
     print("Destroying dataset {}".format(pid))
-    dataset_api.destroy()
+    dataset_api.destroy(dry_run=dry_run)
     action = "Destroyed"
     csv_report.write({'DOI': pid, 'Modified': datetime.now(), 'Change': action})
 
@@ -28,12 +29,13 @@ def main():
         description='Deletes one or more, potentially published, datasets. Requires an API token with superuser '
                     'privileges. Furthermore, the dataverse.safety_latch must be set to OFF.')
     parser.add_argument('pid_or_pid_file', help='The pid or file with pids of the datasets to destroy')
-    parser.add_argument('--delay', default=2.0, help="Delay between actions in seconds", dest='delay')
+    parser.add_argument('-w', '--wait-between-items', default=2.0,
+                        help="Number of seconds to wait between processing items", dest='wait')
     parser.add_argument('-r', '--report-file', default='-', help="The report file, or - for stdout", dest='report_file')
-    parser.add_argument('--dry-run', action='store_true', help="Do not actually delete the datasets")
+    parser.add_argument('-d', '--dry-run', action='store_true', help="Do not actually delete the datasets")
     args = parser.parse_args()
 
-    dataverse_client = DataverseClient(config['dataverse'], dry_run=args.dry_run)
-    batch_processor = BatchProcessorWithReport(delay=args.delay, report_file=args.report_file)
+    dataverse_client = DataverseClient(config['dataverse'])
+    batch_processor = BatchProcessorWithReport(delay=args.wait, report_file=args.report_file)
 
-    destroy_datasets(args, dataverse_client, batch_processor)
+    destroy_datasets(args, dataverse_client, batch_processor, dry_run=args.dry_run)

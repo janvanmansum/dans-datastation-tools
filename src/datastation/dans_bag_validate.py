@@ -3,43 +3,34 @@ import sys
 
 from datastation.common.result_writer import CsvResultWriter, JsonResultWriter, YamlResultWriter
 from src.datastation.common.config import init
-from src.datastation.dans_bag.dans_bag_validator import DansBagValidator
+from src.datastation.dans_bag.validate_dans_bag import ValidateDansBag
 
 
-class DansBagValidateCommand:
-
-    def __init__(self, config, path, information_package_type, accept_type, output_format, dry_run=False):
-        self.config = config
-        self.path = path
-        self.information_package_type = information_package_type
-        self.accept_type = accept_type
-        self.dry_run = dry_run
-        if output_format == 'csv':
-            self.result_writer = CsvResultWriter(headers=['Bag location', 'Information package type', 'Is compliant',
-                                                          'Name', 'Profile version', 'Rule violations'],
-                                                 out_stream=sys.stdout)
-        elif output_format == 'yaml':
-            self.result_writer = YamlResultWriter(out_stream=sys.stdout)
-        else:
-            self.result_writer = JsonResultWriter(out_stream=sys.stdout)
-
-    def run(self):
-        validator = DansBagValidator(self.config['dans_bag_validator'], accept_type=self.accept_type,
-                                     dry_run=self.dry_run)
-        validator.validate(self.path, self.information_package_type, self.result_writer)
+def create_result_writer(format):
+    if format == 'csv':
+        return CsvResultWriter(headers=['Bag location', 'Information package type', 'Is compliant',
+                                        'Name', 'Profile version', 'Rule violations'],
+                               out_stream=sys.stdout)
+    elif format == 'yaml':
+        return YamlResultWriter(out_stream=sys.stdout)
+    else:
+        return JsonResultWriter(out_stream=sys.stdout)
 
 
 def main():
     config = init()
 
+    default_information_package_type = config['validate_dans_bag']['default_information_package_type']
     parser = argparse.ArgumentParser(
         description='Validate one or more bags to see if they comply with the DANS BagIt Profile v1')
     parser.add_argument('path', metavar='<batch-or-deposit-or-bag>',
                         help='Directory containing a bag, a deposit or a batch of deposits')
     parser.add_argument('-t', '--information-package-type', dest='info_package_type',
-                        help='Which information package type to validate this bag as',
+                        help=f'Which information package type to validate this bag as (default: '
+                             f'{default_information_package_type})',
                         choices=['DEPOSIT', 'MIGRATION'],
-                        default='MIGRATION')
+                        required=True,
+                        default=default_information_package_type)
     parser.add_argument('-d', '--dry-run', dest='dry_run', action='store_true',
                         help='Only print command to be sent to server, but do not actually send it')
     parser.add_argument('-f', '--format', dest='format',
@@ -50,4 +41,6 @@ def main():
                              'purposes. (default: application/json)')
 
     args = parser.parse_args()
-    DansBagValidateCommand(config, args.path, args.info_package_type, args.accept, args.format, args.dry_run).run()
+    validate_dans_bag = ValidateDansBag(config['validate_dans_bag'], args.accept)
+    validate_dans_bag.validate(args.path, args.info_package_type, create_result_writer(args.format),
+                               dry_run=args.dry_run)
