@@ -36,6 +36,5 @@ def main():
     args = parser.parse_args()
 
     dataverse_client = DataverseClient(config['dataverse'])
-    batch_processor = BatchProcessorWithReport(delay=args.wait, report_file=args.report_file)
-
+    batch_processor = BatchProcessorWithReport(wait=args.wait, report_file=args.report_file)
     destroy_datasets(args, dataverse_client, batch_processor, dry_run=args.dry_run)

@@ -13,8 +13,8 @@ class TestBatchProcessor:
         captured = capsys.readouterr()
         assert captured.out == "1\n2\n3\n"
 
-    def test_process_pids_with_delay(self, capsys):
-        batch_processor = BatchProcessor(delay=0.1)
+    def test_process_pids_with_wait(self, capsys):
+        batch_processor = BatchProcessor(wait=0.1)
         pids = ["1", "2", "3"]
         callback = lambda pid: print(pid)
         start_time = datetime.now()
@@ -23,3 +23,5 @@ class TestBatchProcessor:
         captured = capsys.readouterr()
         assert captured.out == "1\n2\n3\n"
         assert (end_time - start_time).total_seconds() >= 0.3
+
+

@@ -48,3 +48,14 @@ class TestFindBags:
         with open(os.path.join(tmpdir, 'subdir', 'bag', 'bagit.txt'), 'w') as f:
             f.write('BagIt-Version: 1.0')
         assert list(find_bags(tmpdir)) == []
+
+    def test_directory_with_bag_in_subdirectory_yields_bag_when_max_depth_is_negative(self, tmpdir):
+        os.mkdir(os.path.join(tmpdir, 'subdir'))
+        os.mkdir(os.path.join(tmpdir, 'subdir', 'subdir'))
+        os.mkdir(os.path.join(tmpdir, 'subdir', 'subdir', 'subdir'))
+        os.mkdir(os.path.join(tmpdir, 'subdir', 'subdir', 'subdir', 'subdir'))
+        os.mkdir(os.path.join(tmpdir, 'subdir', 'subdir', 'subdir', 'subdir', 'bag'))
+        with open(os.path.join(tmpdir, 'subdir', 'subdir', 'subdir', 'subdir', 'bag', 'bagit.txt'), 'w') as f:
+            f.write('BagIt-Version: 1.0')
+        assert list(find_bags(tmpdir, max_depth=-1)) == [
+            os.path.join(tmpdir, 'subdir', 'subdir', 'subdir', 'subdir', 'bag')]

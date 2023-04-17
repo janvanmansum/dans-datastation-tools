@@ -6,12 +6,12 @@ from src.datastation.common.config import init
 from src.datastation.dans_bag.validate_dans_bag import ValidateDansBag
 
 
-def create_result_writer(format):
-    if format == 'csv':
+def create_result_writer(file_format):
+    if file_format == 'csv':
         return CsvResultWriter(headers=['Bag location', 'Information package type', 'Is compliant',
                                         'Name', 'Profile version', 'Rule violations'],
                                out_stream=sys.stdout)
-    elif format == 'yaml':
+    elif file_format == 'yaml':
         return YamlResultWriter(out_stream=sys.stdout)
     else:
         return JsonResultWriter(out_stream=sys.stdout)

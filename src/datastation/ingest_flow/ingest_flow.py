@@ -53,7 +53,7 @@ class IngestFlow:
             'continue': continue_previous
         }
         if self.dry_run:
-            logging.info("Only printing command, not sending it...")
+            logging.info("DRY-RUN: only printing command, not sending it...")
             print(json.dumps(command, indent=2))
         else:
             r = requests.post(f'{self.service_baseurl}/{"migrations" if is_migration else "imports"}/:start',
@@ -64,7 +64,7 @@ class IngestFlow:
         url = f'{self.service_baseurl}/blocked-targets/{target}'
 
         if self.dry_run:
-            logging.info("Only printing command, not sending it...")
+            logging.info("DRY-RUN: only printing command, not sending it...")
             print(f'Request: POST {url}')
         else:
             r = requests.post(url)
@@ -82,7 +82,7 @@ class IngestFlow:
         url = f'{self.service_baseurl}/blocked-targets/{target}'
 
         if self.dry_run:
-            logging.info("Only printing command, not sending it...")
+            logging.info("DRY-RUN: only printing command, not sending it...")
             print(f'Request: DELETE {url}')
         else:
             r = requests.delete(url)
@@ -105,7 +105,7 @@ class IngestFlow:
             params = {'source': source}
 
         if self.dry_run:
-            logging.info("Only printing command, not sending it...")
+            logging.info("DRY-RUN: only printing command, not sending it...")
             print(f'Request: GET {url}')
         else:
             r = requests.get(url, params=params)

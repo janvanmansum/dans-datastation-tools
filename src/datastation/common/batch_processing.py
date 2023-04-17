@@ -17,14 +17,8 @@ def get_pids(pid_or_file):
 
 
 class BatchProcessor:
-    def __init__(self, delay=0.1, fail_on_first_error=True):
-        self.delay = delay
-        self.fail_on_first_error = fail_on_first_error
-
-    def set_delay(self, delay):
-        self.delay = delay
-
-    def set_fail_on_first_error(self, fail_on_first_error):
+    def __init__(self, wait=0.1, fail_on_first_error=True):
+        self.wait = wait
         self.fail_on_first_error = fail_on_first_error
 
     def process_pids(self, pids, callback):
@@ -36,7 +30,7 @@ class BatchProcessor:
             try:
                 logging.info(f"Processing {i} of {num_pids}: {pid}")
                 callback(pid)
-                time.sleep(self.delay)
+                time.sleep(self.wait)
             except Exception as e:
                 logging.exception("Exception occurred", exc_info=True)
                 if self.fail_on_first_error:
@@ -47,15 +41,12 @@ class BatchProcessor:
 
 class BatchProcessorWithReport(BatchProcessor):
 
-    def __init__(self, report_file=None, headers=None, delay=0.1, fail_on_first_error=True):
-        super().__init__(delay, fail_on_first_error)
+    def __init__(self, report_file=None, headers=None, wait=0.1, fail_on_first_error=True):
+        super().__init__(wait, fail_on_first_error)
         if headers is None:
             headers = ["DOI", "Modified", "Change"]
         self.report_file = report_file
         self.headers = headers
-
-    def set_report_file(self, report_file):
-        self.report_file = report_file
 
     def process_pids(self, pids, callback):
         with CsvReport(os.path.expanduser(self.report_file), self.headers) as csv_report:

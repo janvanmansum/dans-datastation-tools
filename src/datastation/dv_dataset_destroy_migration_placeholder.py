@@ -17,13 +17,13 @@ def main():
                     'migration_placeholders.description_text_pattern. Note, that the safety latch must also be OFF.')
     parser.add_argument('pid_or_pids_file', help='The pid of the dataset to destroy, or a file with a list of pids')
     parser.add_argument('-d', '--dry-run', action='store_true', help="Do not actually destroy the dataset")
-    parser.add_argument('-w', '--wait-between-items', default=2.0, help="Delay between actions in seconds", dest='wait')
+    parser.add_argument('-w', '--wait-between-items', default=2.0, help="Number of seconds to wait between items",
+                        dest='wait')
     parser.add_argument('-r', '--report-file', default='-', help="The report file, or - for stdout", dest='report_file')
     args = parser.parse_args()
 
-    batch_processor = BatchProcessorWithReport(delay=args.wait, report_file=args.report_file,
+    batch_processor = BatchProcessorWithReport(wait=args.wait, report_file=args.report_file,
                                                headers=['PID', 'Destroyed', 'Messages'])
-    dataverse.set_dry_run(args.dry_run)
     pids = get_pids(args.pid_or_pids_file)
     description_text_pattern = config['migration_placeholders']['description_text_pattern']
     batch_processor.process_pids(pids,

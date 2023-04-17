@@ -20,7 +20,7 @@ class DatasetApi:
         params = {'persistentId': self.pid}
         headers = {'X-Dataverse-key': self.api_token}
         if dry_run:
-            print("Only printing command, not sending it...")
+            print("DRY-RUN: only printing command, not sending it...")
             print(f"GET {url}")
             return None
         else:
@@ -34,7 +34,7 @@ class DatasetApi:
         headers = {'X-Dataverse-key': self.api_token, 'Content-type': 'application/json'}
         role_assignment = {"assignee": assignee, "role": role}
         if dry_run:
-            print("Only printing command, not sending it...")
+            print("DRY-RUN: only printing command, not sending it...")
             print(f"POST {json.dumps(role_assignment)}")
             return None
         else:
@@ -47,7 +47,7 @@ class DatasetApi:
         params = {'persistentId': self.pid}
         headers = {'X-Dataverse-key': self.api_token, 'Content-type': 'application/json'}
         if dry_run:
-            print("Only printing command, not sending it...")
+            print("DRY-RUN: only printing command, not sending it...")
             print(f"DELETE {assignment_id}")
             return None
         else:
@@ -60,7 +60,7 @@ class DatasetApi:
         params = {'persistentId': self.pid}
         headers = {'X-Dataverse-key': self.api_token}
         if dry_run:
-            print("Only printing command, not sending it...")
+            print("DRY-RUN: only printing command, not sending it...")
             print(f"GET {url}")
             return None
         else:
@@ -73,7 +73,7 @@ class DatasetApi:
         params = {'persistentId': self.pid}
         headers = {'X-Dataverse-key': self.api_token}
         if dry_run:
-            print("Only printing command, not sending it...")
+            print("DRY-RUN: only printing command, not sending it...")
             print(f"DELETE {url}")
             return None
         else:
@@ -106,7 +106,7 @@ class DatasetApi:
         params = {'persistentId': self.pid}
         headers = {'X-Dataverse-key': self.api_token}
         if dry_run:
-            print("Only printing command, not sending it...")
+            print("DRY-RUN: only printing command, not sending it...")
             print(f"GET {url}")
             return None
         else:
