@@ -1,14 +1,30 @@
 import argparse
+import os
 
 from datastation.common.batch_processing import BatchProcessor, get_pids
 from datastation.common.config import init
 from datastation.dataverse.dataverse_client import DataverseClient
 
+exporter_to_extension = {
+    'dcterms': 'xml',
+    'ddi': 'xml',
+    'Datacite': 'xml',
+    'html': 'html',
+    'dataverse_json': 'json',
+    'oai_dc': 'xml',
+    'OAI_ORE': 'xml',
+    'oai_datacite': 'xml',
+    'schema.org': 'json'
+}
+
 
 def get_metadata_export(args, pid, dataverse):
     result = dataverse.dataset(pid).get_metadata_export(dry_run=args.dry_run, exporter=args.exporter)
     if args.output_dir:
-        with open(f'{args.output_dir}/{pid}.{args.exorter}', 'w') as f:
+        if not os.path.exists(args.output_dir):
+            os.makedirs(args.output_dir)
+        pid = pid.replace('/', '_')
+        with open(f'{args.output_dir}/{pid}.{exporter_to_extension[args.exporter]}', 'w') as f:
             f.write(result)
     else:
         print(result)
@@ -20,16 +36,19 @@ def main():
 
     parser = argparse.ArgumentParser(description='Get metadata export for a dataset.')
     parser.add_argument('pid_or_pids_file',
-                        help='The pid of the dataset to get the metadata export for, or a file with a list of pids')
-    parser.add_argument('-d', '--dry-run', action='store_true', help="Do not actually get the metadata export")
-    parser.add_argument('-w', '--wait-between-items', default=2.0, help="Number of seconds to wait between items",
-                        dest='wait')
+                        help='the pid of the dataset to get the metadata export for, or a file with a list of pids')
     parser.add_argument('-e', '--exporter', default='dataverse_json',
-                        help="The exporter to use", dest='exporter')
-    parser.add_argument('--fail-fast', action='store_true', help="Fail on the first error")
-    parser.add_argument('-o', '--output-dir', help="The output directory where the exported metadata files will be "
-                                                   "stored. If not provided, the files will be dumped to stdout",
+                        help=f"the exporter to use (one of: {', '.join(exporter_to_extension.keys())}; "
+                             f"default: dataverse_json)",
+                        dest='exporter')
+    parser.add_argument('-o', '--output-dir', help="the output directory where the exported metadata files will be "
+                                                   "stored. If not provided, the files will be dumped to stdout. If "
+                                                   "the directory does not exist, it will be created.",
                         dest='output_dir')
+    parser.add_argument('-w', '--wait-between-items', default=2.0, help="number of seconds to wait between items",
+                        dest='wait')
+    parser.add_argument('--fail-fast', action='store_true', help="Fail on the first error")
+    parser.add_argument('-d', '--dry-run', action='store_true', help="do not actually get the metadata export")
 
     args = parser.parse_args()
     batch_processor = BatchProcessor(wait=args.wait, fail_on_first_error=args.fail_fast)
