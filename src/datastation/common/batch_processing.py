@@ -30,7 +30,9 @@ class BatchProcessor:
             try:
                 logging.info(f"Processing {i} of {num_pids}: {pid}")
                 callback(pid)
-                time.sleep(self.wait)
+                if self.wait > 0 and i < num_pids:
+                    logging.debug(f"Waiting {self.wait} seconds before processing next pid")
+                    time.sleep(self.wait)
             except Exception as e:
                 logging.exception("Exception occurred", exc_info=True)
                 if self.fail_on_first_error:

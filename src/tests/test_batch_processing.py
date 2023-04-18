@@ -22,6 +22,6 @@ class TestBatchProcessor:
         end_time = datetime.now()
         captured = capsys.readouterr()
         assert captured.out == "1\n2\n3\n"
-        assert (end_time - start_time).total_seconds() >= 0.3
+        assert (end_time - start_time).total_seconds() >= 0.2
 
 

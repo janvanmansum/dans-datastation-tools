@@ -100,7 +100,8 @@ class DatasetApi:
     def get_metadata(self, version=':latest', dry_run=False):
         """Get the native JSON metadata for a dataset version. Version can be a number of one of ':latest', ':draft' or
          ':latest-published'. See
-         https://guides.dataverse.org/en/latest/api/native-api.html#retrieving-a-dataset-version for more information.
+         https://guides.dataverse.org/en/latest/api/native-api.html#get-json-representation-of-a-dataset
+         for more information.
          """
         url = f'{self.server_url}/api/datasets/:persistentId/versions/{version}'
         params = {'persistentId': self.pid}
@@ -113,3 +114,20 @@ class DatasetApi:
             r = requests.get(url, headers=headers, params=params)
         r.raise_for_status()
         return r.json()['data']
+
+    def get_metadata_export(self, exporter='dataverse_json', dry_run=False):
+        """Get a metadata export for the latest version of the dataset.
+        See https://guides.dataverse.org/en/latest/api/native-api.html#export-metadata-of-a-dataset-in-various-formats
+         for more information."""
+        # N.B. no :persistentId in the URL
+        url = f'{self.server_url}/api/datasets/export?exporter={exporter}'
+        params = {'persistentId': self.pid}
+        headers = {'X-Dataverse-key': self.api_token}
+        if dry_run:
+            print("DRY-RUN: only printing command, not sending it...")
+            print(f"GET {url}")
+            return None
+        else:
+            r = requests.get(url, headers=headers, params=params)
+        r.raise_for_status()
+        return r.text
