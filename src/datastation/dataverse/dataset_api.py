@@ -149,7 +149,7 @@ class DatasetApi:
 
     def add_lock(self, lock_type, dry_run=False):
         url = f'{self.server_url}/api/datasets/:persistentId/lock/{lock_type}'
-        params = {'persistentId': self.pid }
+        params = {'persistentId': self.pid}
         headers = {'X-Dataverse-key': self.api_token, 'Content-type': 'application/json'}
         if dry_run:
             print("DRY-RUN: only printing command, not sending it...")
@@ -177,3 +177,17 @@ class DatasetApi:
 
     def remove_all_locks(self, dry_run=False):
         return self.remove_lock(dry_run=dry_run)
+
+    def publish(self, update_type='major', dry_run=False):
+        url = f'{self.server_url}/api/datasets/:persistentId/actions/:publish'
+        params = {'persistentId': self.pid, 'type': update_type}
+        headers = {'X-Dataverse-key': self.api_token}
+        if dry_run:
+            print("DRY-RUN: only printing command, not sending it...")
+            print(f"POST {url}")
+            print(f"headers: {headers}")
+            print(f"params: {params}")
+            return None
+        r = requests.post(url, headers=headers, params=params)
+        r.raise_for_status()
+        return r.json()

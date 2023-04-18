@@ -1,7 +1,7 @@
 import argparse
 
 from datastation.common.config import init
-from datastation.ingest_flow.ingest_flow import IngestFlow
+from datastation.ingestflow.ingest_flow import IngestFlow
 
 
 def main():
@@ -9,6 +9,7 @@ def main():
     ingest_flow = IngestFlow(config['ingest_flow'])
 
     parser = argparse.ArgumentParser(description='Commands to control the ingest flow')
+    parser.set_defaults(func=lambda _: parser.print_help())
     parser.add_argument('-d', '--dry-run', dest='dry_run', action='store_true',
                         help='Only print command to be sent to server, but do not actually send it')
 
