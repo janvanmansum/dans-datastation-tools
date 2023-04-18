@@ -34,7 +34,10 @@ def main():
     config = init()
     dataverse = DataverseClient(config['dataverse'])
 
-    parser = argparse.ArgumentParser(description='Get metadata export for a dataset.')
+    parser = argparse.ArgumentParser(description='Get metadata export for a dataset. Note that Dataverse currently '
+                                                 'only supports getting metadata exports for the latest published '
+                                                 'version of a dataset.')
+
     parser.add_argument('pid_or_pids_file',
                         help='the pid of the dataset to get the metadata export for, or a file with a list of pids')
     parser.add_argument('-e', '--exporter', default='dataverse_json',

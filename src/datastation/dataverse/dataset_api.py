@@ -131,3 +131,49 @@ class DatasetApi:
             r = requests.get(url, headers=headers, params=params)
         r.raise_for_status()
         return r.text
+
+    def get_locks(self, lock_type=None, dry_run=False):
+        url = f'{self.server_url}/api/datasets/:persistentId/locks'
+        params = {'persistentId': self.pid}
+        if lock_type:
+            params['type'] = lock_type
+        headers = {'X-Dataverse-key': self.api_token}
+        if dry_run:
+            print("DRY-RUN: only printing command, not sending it...")
+            print(f"GET {url}")
+            return None
+        else:
+            r = requests.get(url, headers=headers, params=params)
+        r.raise_for_status()
+        return r.json()['data']
+
+    def add_lock(self, lock_type, dry_run=False):
+        url = f'{self.server_url}/api/datasets/:persistentId/lock/{lock_type}'
+        params = {'persistentId': self.pid }
+        headers = {'X-Dataverse-key': self.api_token, 'Content-type': 'application/json'}
+        if dry_run:
+            print("DRY-RUN: only printing command, not sending it...")
+            print(f"POST {url}")
+            return None
+        else:
+            r = requests.post(url, headers=headers, params=params)
+            r.raise_for_status()
+            return r.json()
+
+    def remove_lock(self, lock_type=None, dry_run=False):
+        url = f'{self.server_url}/api/datasets/:persistentId/locks'
+        params = {'persistentId': self.pid}
+        if lock_type:
+            params['type'] = lock_type
+        headers = {'X-Dataverse-key': self.api_token}
+        if dry_run:
+            print("DRY-RUN: only printing command, not sending it...")
+            print(f"DELETE {lock_type}")
+            return None
+        else:
+            r = requests.delete(url, headers=headers, params=params)
+        r.raise_for_status()
+        return r.json()
+
+    def remove_all_locks(self, dry_run=False):
+        return self.remove_lock(dry_run=dry_run)
