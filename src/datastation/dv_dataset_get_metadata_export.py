@@ -3,6 +3,7 @@ import os
 
 from datastation.common.batch_processing import BatchProcessor, get_pids
 from datastation.common.config import init
+from datastation.common.utils import add_batch_proccessor_args, add_dry_run_arg
 from datastation.dataverse.dataverse_client import DataverseClient
 
 exporter_to_extension = {
@@ -48,10 +49,8 @@ def main():
                                                    "stored. If not provided, the files will be dumped to stdout. If "
                                                    "the directory does not exist, it will be created.",
                         dest='output_dir')
-    parser.add_argument('-w', '--wait-between-items', default=2.0, help="number of seconds to wait between items",
-                        dest='wait')
-    parser.add_argument('--fail-fast', action='store_true', help="Fail on the first error")
-    parser.add_argument('-d', '--dry-run', action='store_true', help="do not actually get the metadata export")
+    add_batch_proccessor_args(parser)
+    add_dry_run_arg(parser)
 
     args = parser.parse_args()
     batch_processor = BatchProcessor(wait=args.wait, fail_on_first_error=args.fail_fast)

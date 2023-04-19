@@ -3,6 +3,7 @@ from datetime import datetime
 
 from datastation.common.batch_processing import BatchProcessor, get_pids, BatchProcessorWithReport
 from datastation.common.config import init
+from datastation.common.utils import add_batch_proccessor_args, add_dry_run_arg
 from datastation.dataverse.dataverse_client import DataverseClient
 
 
@@ -31,11 +32,8 @@ def main():
 
     parser = argparse.ArgumentParser(description='Deletes one or more dataset drafts')
     parser.add_argument('pid_or_pid_file', help='The pid or file with pids of the datasets to delete')
-    parser.add_argument('--wait-between-items', default=2.0, help="Number of seconds to wait between processing items",
-                        dest='wait')
-    parser.add_argument('--report-file', default='-', help="The report file, or - for stdout",
-                        dest='report_file')
-    parser.add_argument('-d', '--dry-run', action='store_true', help="Do not actually delete the datasets")
+    add_batch_proccessor_args(parser)
+    add_dry_run_arg(parser)
     args = parser.parse_args()
 
     dataverse_client = DataverseClient(config['dataverse'])

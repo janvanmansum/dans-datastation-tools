@@ -5,6 +5,7 @@ import rich
 
 from datastation.common.batch_processing import get_pids, BatchProcessor, BatchProcessorWithReport
 from datastation.common.config import init
+from datastation.common.utils import add_batch_proccessor_args, add_dry_run_arg
 from datastation.dataverse.dataset_api import DatasetApi
 from datastation.dataverse.dataverse_client import DataverseClient
 
@@ -97,14 +98,9 @@ def main():
     parser_add.add_argument('role_assignment',
                             help='role assignee and alias (example: @dataverseAdmin=contributor) to add')
     parser_add.add_argument('pid_or_pid_file', help='the dataset pid or the input file with the dataset pids')
+    add_batch_proccessor_args(parser_add)
+    add_dry_run_arg(parser_add)
 
-    parser_add.add_argument('-r', '--report', required=True, dest='report_file',
-                            help='destination of the output report file, "-" sends it to stdout')
-    parser_add.add_argument('-w', '--wait', dest='wait', help="wait for the dataset to be published",
-                            action='store_true')
-    parser_add.add_argument('-d', '--dry-run', dest='dry_run', help="only logs the actions, nothing is executed")
-    parser_add.add_argument('-f', '--fail-fast', dest='fail_fast', help="stop processing on first error",
-                            action='store_true')
     parser_add.set_defaults(func=lambda _: add_role_assignments(_, dataverse_client))
 
     # Remove role assignment
@@ -112,21 +108,15 @@ def main():
     parser_remove.add_argument('role-assignment',
                                help='role assignee and alias (example: @dataverseAdmin=contributor)')
     parser_remove.add_argument('pid_or_pid_file', help='The dataset pid or the input file with the dataset pids')
-
-    parser_remove.add_argument('-r', '--report', required=True, dest='report_file',
-                               help='Destination of the output report file, "-" sends it to stdout')
-    parser_remove.add_argument('-w', '--wait', dest='wait', help="Wait for the dataset to be published",
-                               action='store_true')
-    parser_remove.add_argument('-d', '--dry-run', dest='dry_run', help="Only logs the actions, nothing is executed")
-    parser_remove.add_argument('-f', '--fail-fast', dest='fail_fast', help="Stop processing on first error",
-                               action='store_true')
+    add_batch_proccessor_args(parser_remove)
+    add_dry_run_arg(parser_remove)
     parser_remove.set_defaults(func=lambda _: remove_role_assignments(_, dataverse_client))
 
     # List role assignments
     parser_list = subparsers.add_parser('list',
                                         help='list role assignments for specified dataset (only one pid allowed)')
     parser_list.add_argument('pid', help='the dataset pid')
-    parser_list.add_argument('-d', '--dry-run', dest='dry_run', help="only logs the actions, nothing is executed")
+    add_dry_run_arg(parser_list)
     parser_list.set_defaults(func=lambda _: list_role_assignments(_, dataverse_client))
 
     args = parser.parse_args()

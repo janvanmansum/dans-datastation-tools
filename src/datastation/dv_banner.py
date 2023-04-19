@@ -3,6 +3,7 @@ import argparse
 import rich
 
 from datastation.common.config import init
+from datastation.common.utils import add_dry_run_arg
 from datastation.dataverse.dataverse_client import DataverseClient
 
 
@@ -36,19 +37,16 @@ def main():
     parser_add.add_argument('message', help="Message to add as banner, note that HTML can be included.")
     parser_add.add_argument('-u', '--dismissible-by-user', dest='dismissible_by_user', action='store_true',
                             help="Whether the user can permanently dismiss the banner")
-    parser_add.add_argument('-d', '--dry-run', dest='dry_run', action='store_true',
-                            help='Only print command to be sent to server, but do not actually send it')
+    add_dry_run_arg(parser_add)
     parser_add.set_defaults(func=lambda _: add_message(_, dataverse))
 
     parser_remove = subparsers.add_parser('remove', help="Remove banner messages")
     parser_remove.add_argument('ids', help="One or more ids of banner messages", nargs='+')
-    parser_remove.add_argument('-d', '--dry-run', dest='dry_run', action='store_true',
-                               help='Only print command to be sent to server, but do not actually send it')
+    add_dry_run_arg(parser_remove)
     parser_remove.set_defaults(func=lambda _: remove_message(_, dataverse))
 
     parser_list = subparsers.add_parser('list', help="List banner messages")
-    parser_list.add_argument('-d', '--dry-run', dest='dry_run', action='store_true',
-                             help='Only print command to be sent to server, but do not actually send it')
+    add_dry_run_arg(parser_list)
     parser_list.set_defaults(func=lambda _: list_messages(_, dataverse))
 
     args = parser.parse_args()

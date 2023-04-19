@@ -4,6 +4,7 @@ from datetime import datetime
 
 from datastation.common.batch_processing import BatchProcessorWithReport, get_pids
 from datastation.common.config import init
+from datastation.common.utils import add_batch_proccessor_args, add_dry_run_arg
 from datastation.dataverse.dataverse_client import DataverseClient
 
 
@@ -46,14 +47,8 @@ def main():
     parser.add_argument('-u', '--update-type', dest='update_type',
                         help='whether to create a major, version or update the '
                              'current version (default: major)', choices=update_types, default='major')
-    parser.add_argument('-r', '--report-file', default='-', help="The report file, or - for stdout",
-                        dest='report_file')
-    parser.add_argument('-w', '--wait-between-items', default=2.0,
-                        help="Number of seconds to wait between processing items",
-                        dest='wait')
-    parser.add_argument('-f', '--fail-fast', dest='fail_fast', action='store_true', help='fail on first error ')
-    parser.add_argument('-d', '--dry-run', dest='dry_run', action='store_true', help='do not actually publish the '
-                                                                                     'dataset. (default: false)')
+    add_batch_proccessor_args(parser)
+    add_dry_run_arg(parser)
 
     args = parser.parse_args()
     publish_datasets(args, dataverse)
