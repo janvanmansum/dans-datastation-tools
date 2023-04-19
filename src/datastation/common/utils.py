@@ -2,6 +2,30 @@ import os
 import shutil
 
 
+def add_dry_run_arg(parser):
+    parser.add_argument('-d', '--dry-run', action='store_true',
+                        help='Do not perform the action, but show what would be done.')
+
+
+def add_batch_proccessor_args(parser, report: bool = True):
+    parser.add_argument('-w', '--wait-between-items', default=2.0, type=float,
+                        help="number of seconds to wait between processing items",
+                        dest='wait')
+    parser.add_argument('-f', '--fail-fast', dest='fail_fast', action='store_true', help='fail on first error ')
+    if report:
+        parser.add_argument('-r', '--report-file', default='-', help="the report file, or - for stdout",
+                            dest='report_file')
+
+
+def print_dry_run_message(method, url, params=None, headers=None, data=None):
+    print("DRY-RUN: only printing command, not sending it...")
+    print(f"{method} {url}")
+    print(f"headers: {headers}")
+    print(f"params: {params}")
+    print(f"data: {data}")
+    print()
+
+
 def is_sub_path_of(child, parent):
     """
     Returns True if child is a descendant directory of parent, or if child is a file in a descendant directory

@@ -2,6 +2,8 @@ import json
 
 import requests
 
+from datastation.common.utils import print_dry_run_message
+
 
 class DatasetApi:
 
@@ -20,8 +22,7 @@ class DatasetApi:
         params = {'persistentId': self.pid}
         headers = {'X-Dataverse-key': self.api_token}
         if dry_run:
-            print("DRY-RUN: only printing command, not sending it...")
-            print(f"GET {url}")
+            print_dry_run_message(method='GET', url=url, headers=headers, params=params)
             return None
         else:
             r = requests.get(url, headers=headers, params=params)
@@ -34,8 +35,8 @@ class DatasetApi:
         headers = {'X-Dataverse-key': self.api_token, 'Content-type': 'application/json'}
         role_assignment = {"assignee": assignee, "role": role}
         if dry_run:
-            print("DRY-RUN: only printing command, not sending it...")
-            print(f"POST {json.dumps(role_assignment)}")
+            print_dry_run_message(method='POST', url=url, headers=headers, params=params,
+                                  data=json.dumps(role_assignment))
             return None
         else:
             r = requests.post(url, headers=headers, params=params, json=role_assignment)
@@ -47,8 +48,7 @@ class DatasetApi:
         params = {'persistentId': self.pid}
         headers = {'X-Dataverse-key': self.api_token, 'Content-type': 'application/json'}
         if dry_run:
-            print("DRY-RUN: only printing command, not sending it...")
-            print(f"DELETE {assignment_id}")
+            print_dry_run_message(method='DELETE', url=url, headers=headers, params=params)
             return None
         else:
             r = requests.delete(url, headers=headers, params=params)
@@ -60,8 +60,7 @@ class DatasetApi:
         params = {'persistentId': self.pid}
         headers = {'X-Dataverse-key': self.api_token}
         if dry_run:
-            print("DRY-RUN: only printing command, not sending it...")
-            print(f"GET {url}")
+            print_dry_run_message(method='GET', url=url, headers=headers, params=params)
             return None
         else:
             r = requests.get(url, headers=headers, params=params)
@@ -73,8 +72,7 @@ class DatasetApi:
         params = {'persistentId': self.pid}
         headers = {'X-Dataverse-key': self.api_token}
         if dry_run:
-            print("DRY-RUN: only printing command, not sending it...")
-            print(f"DELETE {url}")
+            print_dry_run_message(method='DELETE', url=url, headers=headers, params=params)
             return None
         else:
             r = requests.delete(url, headers=headers, params=params)
@@ -84,14 +82,14 @@ class DatasetApi:
     def destroy(self, dry_run=False):
         url = f'{self.server_url}/api/datasets/:persistentId/destroy'
         headers = {'X-Dataverse-key': self.api_token}
-        params = {'persistentId': self.pid, 'unblockKey': self.unblock_key}
+        params = {'persistentId': self.pid, 'unblock-key': self.unblock_key}
 
         if self.safety_latch:
             print("Safety latch is on, not sending command...")
             return None
         else:
             if dry_run:
-                print("Dry run, not sending command...")
+                print_dry_run_message(method='DELETE', url=url, headers=headers, params=params)
                 return None
             r = requests.delete(url, headers=headers, params=params)
         r.raise_for_status()
@@ -107,8 +105,7 @@ class DatasetApi:
         params = {'persistentId': self.pid}
         headers = {'X-Dataverse-key': self.api_token}
         if dry_run:
-            print("DRY-RUN: only printing command, not sending it...")
-            print(f"GET {url}")
+            print_dry_run_message(method='GET', url=url, headers=headers, params=params)
             return None
         else:
             r = requests.get(url, headers=headers, params=params)
@@ -124,8 +121,7 @@ class DatasetApi:
         params = {'persistentId': self.pid}
         headers = {'X-Dataverse-key': self.api_token}
         if dry_run:
-            print("DRY-RUN: only printing command, not sending it...")
-            print(f"GET {url}")
+            print_dry_run_message(method='GET', url=url, headers=headers, params=params)
             return None
         else:
             r = requests.get(url, headers=headers, params=params)
@@ -139,8 +135,7 @@ class DatasetApi:
             params['type'] = lock_type
         headers = {'X-Dataverse-key': self.api_token}
         if dry_run:
-            print("DRY-RUN: only printing command, not sending it...")
-            print(f"GET {url}")
+            print_dry_run_message(method='GET', url=url, headers=headers, params=params)
             return None
         else:
             r = requests.get(url, headers=headers, params=params)
@@ -152,8 +147,7 @@ class DatasetApi:
         params = {'persistentId': self.pid}
         headers = {'X-Dataverse-key': self.api_token, 'Content-type': 'application/json'}
         if dry_run:
-            print("DRY-RUN: only printing command, not sending it...")
-            print(f"POST {url}")
+            print_dry_run_message(method='POST', url=url, headers=headers, params=params)
             return None
         else:
             r = requests.post(url, headers=headers, params=params)
@@ -167,8 +161,7 @@ class DatasetApi:
             params['type'] = lock_type
         headers = {'X-Dataverse-key': self.api_token}
         if dry_run:
-            print("DRY-RUN: only printing command, not sending it...")
-            print(f"DELETE {lock_type}")
+            print_dry_run_message(method='DELETE', url=url, headers=headers, params=params)
             return None
         else:
             r = requests.delete(url, headers=headers, params=params)
@@ -183,11 +176,22 @@ class DatasetApi:
         params = {'persistentId': self.pid, 'type': update_type}
         headers = {'X-Dataverse-key': self.api_token}
         if dry_run:
-            print("DRY-RUN: only printing command, not sending it...")
-            print(f"POST {url}")
-            print(f"headers: {headers}")
-            print(f"params: {params}")
+            print_dry_run_message(method='POST', url=url, headers=headers, params=params)
             return None
         r = requests.post(url, headers=headers, params=params)
+        r.raise_for_status()
+        return r.json()
+
+    def reindex(self, dry_run=False):
+        url = f'{self.server_url}/api/admin/index/dataset'
+        params = {'persistentId': self.pid}
+        headers = {'X-Dataverse-key': self.api_token}
+        if self.unblock_key:
+            params['unblock-key'] = self.unblock_key
+        if dry_run:
+            print_dry_run_message(method='GET', url=url, headers=headers, params=params)
+            return None
+        else:
+            r = requests.get(url, headers=headers, params=params)
         r.raise_for_status()
         return r.json()
