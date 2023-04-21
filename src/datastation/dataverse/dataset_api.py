@@ -195,3 +195,15 @@ class DatasetApi:
             r = requests.get(url, headers=headers, params=params)
         r.raise_for_status()
         return r.json()
+
+    def modify_registration_metadata(self, dry_run=False):
+        url = f'{self.server_url}/api/datasets/:persistentId/modifyRegistrationMetadata'
+        params = {'persistentId': self.pid}
+        headers = {'X-Dataverse-key': self.api_token}
+        if dry_run:
+            print_dry_run_message(method='POST', url=url, headers=headers, params=params)
+            return None
+        else:
+            r = requests.post(url, headers=headers, params=params)
+        r.raise_for_status()
+        return r.json()
