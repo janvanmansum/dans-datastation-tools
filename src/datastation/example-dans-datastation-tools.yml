@@ -5,7 +5,7 @@ dataverse:
   api_token: your-api-token-here
   server_url: 'http://localhost:8080'
   files_root: your-files-root-here
-  unblock-key: changeMe
+  unblock_key: changeMe
   safety_latch: ON
   db:
     host: localhost
@@ -30,7 +30,7 @@ ingest_flow:
       inbox: '/var/opt/dans.knaw.nl/tmp/migration/deposits'
       outbox: '/var/opt/dans.knaw.nl/tmp/migration/out'
 
-dans_bag_validator:
+validate_dans_bag:
   service_baseurl: 'http://localhost:20330'
   default_information_package_type: MIGRATION
 
