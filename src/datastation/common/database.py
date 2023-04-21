@@ -19,6 +19,11 @@ class Database:
             cursor.execute(query)
             return cursor.fetchall()
 
+    def update(self, query):
+        with self.connection.cursor() as cursor:
+            cursor.execute(query)
+            self.connection.commit()
+
     def close(self):
         if self.connection is not None:
             self.connection.close()

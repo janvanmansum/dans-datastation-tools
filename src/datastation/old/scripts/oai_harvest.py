@@ -4,8 +4,8 @@ import os
 from datetime import datetime
 
 from lxml import etree
-
 from src.datastation.old.config import init
+
 from src.datastation.old.dv_api import get_oai_records, get_oai_records_resume
 
 

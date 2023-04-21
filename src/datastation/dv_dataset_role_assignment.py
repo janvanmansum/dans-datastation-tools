@@ -3,7 +3,7 @@ from datetime import datetime
 
 import rich
 
-from datastation.common.batch_processing import get_pids, BatchProcessor, BatchProcessorWithReport
+from datastation.common.batch_processing import get_pids, BatchProcessorWithReport
 from datastation.common.config import init
 from datastation.common.utils import add_batch_proccessor_args, add_dry_run_arg
 from datastation.dataverse.dataset_api import DatasetApi

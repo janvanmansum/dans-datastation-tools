@@ -2,7 +2,7 @@ import logging
 import os
 import time
 
-from datastation.common.csv_report import CsvReport
+from datastation.common.csv import CsvReport
 
 
 def get_pids(pid_or_file):

@@ -6,7 +6,6 @@ import sys
 
 import psycopg
 import requests
-
 from src.datastation.old.config import init
 
 

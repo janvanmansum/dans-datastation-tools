@@ -2,7 +2,7 @@ import argparse
 import logging
 
 from datastation.common.config import init
-from datastation.common.database import Database
+from datastation.dataverse.dataverse_client import DataverseClient
 
 
 def find_datasets_by_role_assignment(database, role_assignment):
@@ -23,9 +23,10 @@ def find_datasets_by_role_assignment(database, role_assignment):
 
 def main():
     config = init()
+    dataverse = DataverseClient(config['dataverse'])
     parser = argparse.ArgumentParser(description='Find datasets by role assignment.')
     parser.add_argument('role_assignment', help='The role assignment to find, e.g. "@user1=curator"')
     args = parser.parse_args()
 
-    with Database(config['dataverse']['db']) as database:
+    with dataverse.database() as database:
         find_datasets_by_role_assignment(database, args.role_assignment)

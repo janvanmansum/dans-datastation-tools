@@ -2,7 +2,7 @@
 
 import csv
 
-from datastation.common.csv_report import CsvReport
+from datastation.common.csv import CsvReport
 
 
 class TestCsvReport:

@@ -1,12 +1,11 @@
 import argparse
 import json
 
-import rich
 from requests import HTTPError
 
 from datastation.common.batch_processing import get_pids, BatchProcessorWithReport
 from datastation.common.config import init
-from datastation.common.csv_report import CsvReport
+from datastation.common.csv import CsvReport
 from datastation.common.utils import add_batch_proccessor_args, add_dry_run_arg
 from datastation.dataverse.dataverse_client import DataverseClient
 

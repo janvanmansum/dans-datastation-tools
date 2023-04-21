@@ -1,7 +1,7 @@
 import logging
 from re import match
 
-from datastation.common.csv_report import CsvReport
+from datastation.common.csv import CsvReport
 from datastation.dataverse.dataset_api import DatasetApi
 
 

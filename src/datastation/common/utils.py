@@ -1,6 +1,6 @@
+import json as jsonlib
 import os
 import shutil
-import json as jsonlib
 
 
 def add_dry_run_arg(parser):
