@@ -1,5 +1,6 @@
 import os
 import shutil
+import json as jsonlib
 
 
 def add_dry_run_arg(parser):
@@ -17,12 +18,13 @@ def add_batch_proccessor_args(parser, report: bool = True):
                             dest='report_file')
 
 
-def print_dry_run_message(method, url, params=None, headers=None, data=None):
+def print_dry_run_message(method, url, params=None, headers=None, data=None, json=None):
     print("DRY-RUN: only printing command, not sending it...")
     print(f"{method} {url}")
-    print(f"headers: {headers}")
-    print(f"params: {params}")
-    print(f"data: {data}")
+    print(f"headers: {headers}") if headers else None
+    print(f"params: {params}") if params else None
+    print(f"data: {data}") if data else None
+    print(f"json: {jsonlib.dumps(json)}") if json else None
     print()
 
 
