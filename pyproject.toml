@@ -19,6 +19,8 @@ now = "^0.0.6"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
+pytest-cov = "^2.6"
+coverage = "^5.5"
 psycopg_binary = "^3.0.16"
 
 [build-system]
