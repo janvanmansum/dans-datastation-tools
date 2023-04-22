@@ -8,19 +8,19 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6.8"
-requests = "^2.26.0"
+python = "^3.9"
+requests = "^2.28.2"
 lxml = "^4.8.0"
 dicttoxml = "^1.7.4"
 pyYAML = "^6.0"
 psycopg = "^3.0.16"
-rich = "^12.6.0"
+rich = "^13.3.4"
 now = "^0.0.6"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
-pytest-cov = "^2.6"
-coverage = "^5.5"
+pytest = "^7.3.1"
+pytest-cov = "^4.0.0"
+coverage = "^7.2.3"
 psycopg_binary = "^3.0.16"
 
 [build-system]
