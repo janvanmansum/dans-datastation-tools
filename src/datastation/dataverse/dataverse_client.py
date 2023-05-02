@@ -11,7 +11,7 @@ class DataverseClient:
     def __init__(self, config: dict):
         self.server_url = config['server_url']
         self.api_token = config['api_token']
-        self.unblock_key = config['unblock_key']
+        self.unblock_key = config['unblock_key'] if 'unblock_key' in config else None
         self.safety_latch = config['safety_latch']
         self.db_config = config['db']
 
