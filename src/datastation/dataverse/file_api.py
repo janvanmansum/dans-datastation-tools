@@ -14,7 +14,7 @@ class FileApi:
 
     def reingest(self, dry_run=False):
         url = f'{self.server_url}/api/files/{self.id}/reingest'
-        params = {'key': self.unblock_key}
+        params = {'unblock-key': self.unblock_key}
         headers = {'X-Dataverse-key': self.api_token}
         if dry_run:
             print_dry_run_message(method='POST', url=url, headers=headers, params=params)
