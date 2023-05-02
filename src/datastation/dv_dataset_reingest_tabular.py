@@ -23,7 +23,7 @@ def reingest_tabular_files_in_dataset(pid, dataverse_client: DataverseClient, cs
     files = dataverse_client.dataset(pid).get_files()
     try:
         for file in files:
-            file_id = file['data']['id']
+            file_id = file['dataFile']['id']
             dataverse_client.dataset(pid).await_unlock()
             dataverse_client.file(file_id).reingest(dry_run=dry_run)
             dataverse_client.dataset(pid).await_unlock()
