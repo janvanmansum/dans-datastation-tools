@@ -2,6 +2,8 @@ import argparse
 import logging
 from datetime import datetime
 
+import requests
+
 from datastation.common.batch_processing import get_pids, BatchProcessorWithReport
 from datastation.common.config import init
 from datastation.common.utils import add_batch_proccessor_args, add_dry_run_arg
@@ -23,12 +25,27 @@ def reingest_tabular_files_in_dataset(pid, dataverse_client: DataverseClient, cs
     files = dataverse_client.dataset(pid).get_files()
     try:
         for file in files:
-            file_id = file['dataFile']['id']
-            dataverse_client.dataset(pid).await_unlock()
-            dataverse_client.file(file_id).reingest(dry_run=dry_run)
-            dataverse_client.dataset(pid).await_unlock()
-            csv_report.write({'DOI': pid, 'Modified': datetime.now(), 'Change': 'Re-ingested', 'Messages': ''})
-            logging.info(f"Re-ingested file {file_id} in dataset {pid}")
+            try:
+                file_id = file['dataFile']['id']
+                dataverse_client.dataset(pid).await_unlock()
+                dataverse_client.file(file_id).reingest(dry_run=dry_run)
+                dataverse_client.dataset(pid).await_unlock()
+                csv_report.write({'DOI': pid, 'Modified': datetime.now(), 'Change': 'Re-ingested', 'Messages': ''})
+                logging.info(f"Re-ingested file {file_id} in dataset {pid}")
+            except requests.exceptions.RequestException as re:
+                # if the requests throws an exception, it might be to just tell us that the file cannot be ingested as tabular,
+                # or some other reason that is a valid response. In that case, we just log it and move on
+                try:
+                    message = re.response.json()["message"]
+                    logging.info(
+                        '[%s] Reingest not completed for file id %s, reason is "%s"',
+                        pid,
+                        file_id,
+                        message,
+                    )
+                    csv_report.write({'DOI': pid, 'Modified': datetime.now(), 'Change': 'None', 'Messages': message})
+                except:
+                    pass
     except Exception as e:
         csv_report.write({'DOI': pid, 'Modified': datetime.now(), 'Change': 'Error', 'Messages': str(e)})
         logging.warning(f"Error re-ingesting files in dataset {pid}: {e}. Moving on to next dataset.")
