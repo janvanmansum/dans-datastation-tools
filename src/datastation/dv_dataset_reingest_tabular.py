@@ -25,24 +25,21 @@ def reingest_tabular_files_in_dataset(pid, dataverse_client: DataverseClient, cs
     files = dataverse_client.dataset(pid).get_files()
     try:
         for file in files:
+            file_id = file['dataFile']['id']
             try:
-                file_id = file['dataFile']['id']
                 dataverse_client.dataset(pid).await_unlock()
                 dataverse_client.file(file_id).reingest(dry_run=dry_run)
                 dataverse_client.dataset(pid).await_unlock()
-                csv_report.write({'DOI': pid, 'Modified': datetime.now(), 'Change': 'Re-ingested', 'Messages': ''})
+                csv_report.write({'DOI': pid, 'Modified': datetime.now(), 'Change': 'Re-ingested',
+                                  'Messages': 'Re-ingest was requested.'})
                 logging.info(f"Re-ingested file {file_id} in dataset {pid}")
             except requests.exceptions.RequestException as re:
-                # if the requests throws an exception, it might be to just tell us that the file cannot be ingested as tabular,
-                # or some other reason that is a valid response. In that case, we just log it and move on
+                # if the requests throws an exception, it might be to just tell us that the file cannot be ingested
+                # as tabular, or some other reason that is a valid response. In that case, we just log it and move on
                 try:
                     message = re.response.json()["message"]
                     logging.info(
-                        '[%s] Reingest not completed for file id %s, reason is "%s"',
-                        pid,
-                        file_id,
-                        message,
-                    )
+                        f'[{pid}] Re-ingest not completed for file id {file_id}, reason is "{message}".')
                     csv_report.write({'DOI': pid, 'Modified': datetime.now(), 'Change': 'None', 'Messages': message})
                 except:
                     pass
