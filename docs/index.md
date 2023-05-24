@@ -68,7 +68,7 @@ The JSON output of this command can be queried with `jq`. This tool has a very g
 [manual](https://stedolan.github.io/jq/manual/){:target=_blank}. However, to get you started, here are some example
 queries:
 
-```text
+```bash
 dans-bag-validate <target> > ~/results.json
 
 # Print only the bag location and the violations
@@ -87,18 +87,21 @@ INSTALLATION & CONFIGURATION
 
 ### Installation
 
-* For the current user (this is the recommended way, when installing on your own machine):
+#### For the current user 
+This is the recommended way, when installing on your own machine.
+  
+```bash
+pip3 install --user dans-datastation-tools
+```
+  
+ You may have to add the directory where `pip3` installs the command to the `PATH` manually.
 
-  ```bash
-  pip3 install --user dans-datastation-tools
-  ```
-  You may have to add the directory where `pip3` installs the command to the `PATH` manually.
+#### Globally 
+This is useful when installing on a server where the commands need to be shared by multiple users.
 
-* Globally (this is useful when installing on a server where the commands need to be shared by multiple users):
-
-  ```bash
-  sudo pip3 install dans-datastation-tools
-  ```
+```bash
+sudo pip3 install dans-datastation-tools
+```
 
 ### Configuration
 
