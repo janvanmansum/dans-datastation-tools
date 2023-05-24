@@ -40,3 +40,6 @@ def main():
     args = parser.parse_args()
     update_datacite_records(args, dataverse_client=dataverse)
 
+
+if __name__ == '__main__':
+    main()

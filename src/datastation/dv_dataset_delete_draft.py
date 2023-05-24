@@ -39,3 +39,7 @@ def main():
     dataverse_client = DataverseClient(config['dataverse'])
     batch_processor = BatchProcessorWithReport(wait=args.wait, report_file=args.report_file)
     delete_dataset_drafts(args, dataverse_client, batch_processor)
+
+
+if __name__ == '__main__':
+    main()

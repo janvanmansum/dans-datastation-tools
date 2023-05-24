@@ -11,46 +11,23 @@ pip3 install dans-datastation-tools
 
 # Available commands, use --help for more information
 
-# Manage a dataverse collection
-dv-dataverse-retrieve-pids
-dv-dataverse-oai-harvest
-
-# Manage role assignments
-dv-dataset-find-with-role-assignment
-dv-dataset-add-role-assignment
-dv-dataset-delete-role-assignment
-
-# Manage dataset metadata
-dv-dataset-replace-metadata-field-values
-dv-dataset-retrieve-metadata
-dv-dataset-retrieve-metadata-field
-
-# Manage dataset state
-dv-dataset-delete-draft
-dv-dataset-destroy
-dv-dataset-publish
-dv-dataset-reindex
-dv-dataset-manage-locks
-dv-dataset-update-datacite-record
-
-#manage Banner Messages
-dv-banner
-
-# User management
-dv-user-import
-
-# Manage dd-ingest-flow
-ingest-flow-copy-batch-to-ingest-area
-ingest-flow-move-batch-to-ingest-area
-ingest-flow-start-migration
-ingest-flow-start-import
-
-# Validate bags for compliance with DANS BagIt Profile
+# DANS bag validation
 dans-bag-validate
 
-# Helper scripts for the migration from EASY
-dv-dataset-destroy-migration-placeholder
-dv-file-prestage
+# Dataverse banner management
+dv-banner 
+
+# Dataverse dataset management
+dv-dataset-delete-draft 
+dv-dataset-destroy
+dv-dataset-destroy-migration-placeholder  
+dv-dataset-find-by-role-assignment
+ 
+
+# Dataverse user management
+dv-user-import
+
+
 
 ```
 

@@ -52,3 +52,7 @@ def main():
 
     args = parser.parse_args()
     publish_datasets(args, dataverse)
+
+
+if __name__ == '__main__':
+    main()

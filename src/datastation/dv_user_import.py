@@ -25,3 +25,7 @@ def main():
     user_import = UserImport(dataverse_client, builtin_users_key=args.builtin_users_key,
                              is_easy_format=args.is_easy_format, dry_run=args.dry_run)
     user_import.import_users(args.input_csv)
+
+
+if __name__ == '__main__':
+    main()

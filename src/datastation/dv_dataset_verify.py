@@ -18,3 +18,7 @@ def main():
     args = parser.parse_args()
     r = verify_dataset_service.verify_dataset(args.pid_or_pid_file, dry_run=args.dry_run)
     rich.print_json(data=r)
+
+
+if __name__ == '__main__':
+    main()
