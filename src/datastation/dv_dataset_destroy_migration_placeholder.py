@@ -29,3 +29,7 @@ def main():
                                  callback=lambda pid, csv_report: destroy_placeholder_dataset(dataverse.dataset(pid),
                                                                                               description_text_pattern,
                                                                                               csv_report))
+
+
+if __name__ == '__main__':
+    main()

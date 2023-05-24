@@ -57,3 +57,7 @@ def main():
     pids = get_pids(args.pid_or_pids_file)
     batch_processor.process_pids(pids,
                                  callback=lambda pid: get_metadata_export(args, pid, dataverse))
+
+
+if __name__ == '__main__':
+    main()

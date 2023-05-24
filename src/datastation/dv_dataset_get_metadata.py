@@ -30,3 +30,7 @@ def main():
         print(f"Retrieved metadata for dataset {args.pid} version {args.version}", file=sys.stderr)
     except Exception as e:
         print(f"Error retrieving metadata: {e}")
+
+
+if __name__ == '__main__':
+    main()

@@ -59,3 +59,7 @@ def main():
 
     args = parser.parse_args()
     args.func(args, dataverse)
+
+
+if __name__ == '__main__':
+    main()

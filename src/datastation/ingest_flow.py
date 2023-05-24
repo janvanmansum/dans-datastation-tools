@@ -67,3 +67,7 @@ def main():
     ingest_flow.set_dry_run(args.dry_run)
 
     args.func(args)
+
+
+if __name__ == '__main__':
+    main()

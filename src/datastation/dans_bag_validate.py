@@ -44,3 +44,7 @@ def main():
     validate_dans_bag = ValidateDansBag(config['validate_dans_bag'], args.accept)
     validate_dans_bag.validate(args.path, args.info_package_type, create_result_writer(args.format),
                                dry_run=args.dry_run)
+
+
+if __name__ == '__main__':
+    main()
