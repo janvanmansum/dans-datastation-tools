@@ -30,3 +30,7 @@ def main():
 
     with dataverse.database() as database:
         find_datasets_by_role_assignment(database, args.role_assignment)
+
+
+if __name__ == '__main__':
+    main()

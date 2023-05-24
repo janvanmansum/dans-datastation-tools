@@ -38,3 +38,7 @@ def main():
 
     args = parser.parse_args()
     reindex_datasets(args, dataverse_client=dataverse)
+
+
+if __name__ == '__main__':
+    main()
