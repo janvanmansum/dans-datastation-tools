@@ -31,6 +31,7 @@ def main():
     dataverse = DataverseClient(config['dataverse'])
 
     parser = argparse.ArgumentParser()
+    parser.set_defaults(func=lambda _: parser.print_help())
 
     subparsers = parser.add_subparsers()
     parser_add = subparsers.add_parser('add', help="Add a banner message")
