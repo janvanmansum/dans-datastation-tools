@@ -1,6 +1,8 @@
 import json
-from typing import Optional
+import logging
+import sys
 
+from datastation.common.result_writer import JsonResultWriter
 from datastation.dataverse.dataverse_client import DataverseClient
 
 
@@ -11,9 +13,11 @@ class Datasets:
 
     def print_dataset_attributes(self, storage: bool, role: str, pid: str):
         def process_dataset_attributes(
-            dataset: dict,
-            storage: bool,
-            role: str,
+                dataset: dict,
+                storage: bool,
+                role: str,
+                result_writer: JsonResultWriter = None,
+                is_first: bool = False
         ):
             # convert search result to dataset if needed
             if "global_id" in dataset:
@@ -49,7 +53,10 @@ class Datasets:
                         if user["_roleAlias"] == role
                     ]
 
-            print(json.dumps(attributes, indent=2))
+            if result_writer:
+                result_writer.write(attributes, is_first)
+            else:
+                print(json.dumps(attributes, indent=2))
 
         # a single dataset
         if pid is not None:
@@ -66,5 +73,16 @@ class Datasets:
             # all datasets
             contents = self.dataverse_client.dataverse().search(dry_run=self.dry_run)
 
-            for result in contents:
-                process_dataset_attributes(result, storage, role)
+            result_writer = JsonResultWriter(out_stream=sys.stdout)
+            first = True
+
+            try:
+                for result in contents:
+                    try:
+                        process_dataset_attributes(result, storage, role, result_writer, is_first=first)
+                        first = False
+                    except Exception as e:
+                        logging.error(f"Error processing dataset {result['global_id']}: {e}")
+                        continue
+            finally:
+                result_writer.close()
