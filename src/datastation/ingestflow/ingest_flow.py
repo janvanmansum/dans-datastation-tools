@@ -129,9 +129,9 @@ class IngestFlow:
             return 1
         else:
             logging.debug("Found ingest_area: {}".format(ingest_area))
-            rel_batch_dir = os.path.relpath(abs_batch_dir, ingest_area['inbox'])
+            rel_batch_dir = os.path.relpath(abs_batch_dir, self.ingest_areas[ingest_area]['inbox'])
             logging.debug("Relative batch dir: {}".format(rel_batch_dir))
-            abs_out_dir = os.path.join(ingest_area['outbox'], rel_batch_dir)
+            abs_out_dir = os.path.join(self.ingest_areas[ingest_area]['outbox'], rel_batch_dir)
             logging.debug("Absolute out dir : {}".format(abs_out_dir))
 
             todo = len(os.listdir(abs_batch_dir))
