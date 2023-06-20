@@ -122,7 +122,8 @@ class IngestFlow:
 
     def progress_report(self, batch_dir):
         abs_batch_dir = os.path.abspath(batch_dir)
-        ingest_area = next(filter(lambda ia: is_sub_path_of(abs_batch_dir, ia['inbox']), self.ingest_areas), None)
+        ingest_area = next(filter(lambda ia: is_sub_path_of(abs_batch_dir, expand_path(self.ingest_areas[ia]['inbox'])),
+                                  self.ingest_areas), None)
         if ingest_area is None:
             print("ERROR: batch_dir {} does not seems to be in one of the inboxes: {}".format(batch_dir, ingest_area))
             return 1
