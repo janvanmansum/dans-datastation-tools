@@ -3,8 +3,8 @@ import sys
 
 from datastation.common.result_writer import CsvResultWriter, JsonResultWriter, YamlResultWriter
 from datastation.common.utils import add_dry_run_arg
-from src.datastation.common.config import init
-from src.datastation.dans_bag.validate_dans_bag import ValidateDansBag
+from datastation.common.config import init
+from datastation.dans_bag.validate_dans_bag import ValidateDansBag
 
 
 def create_result_writer(file_format):
