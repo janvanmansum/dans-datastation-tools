@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import shutil
+import stat
 from pathlib import Path
 
 import requests
@@ -19,7 +20,7 @@ def is_deposit(path):
 
 
 def is_file_writeable_to_group(f):
-    return os.stat(f).st_mode & os.stat.S_IWGRP > 0
+    return os.stat(f).st_mode & stat.S_IWGRP > 0
 
 
 class IngestFlow:
