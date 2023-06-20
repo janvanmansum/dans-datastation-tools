@@ -153,16 +153,14 @@ class IngestFlow:
         After copying, the mode of the copied files and directories will be set to the value configured in the ingest
         area."""
 
-        def get_inbox(ingest_area):
-            return expand_path(ingest_area['inbox'])
-
         abs_source = expand_path(source)
         abs_target = expand_path(target)
         if not os.path.isdir(abs_source):
             print(f"ERROR: source {source} is not a directory")
             return 1
 
-        ingest_area = next(filter(lambda ia: is_sub_path_of(abs_target, get_inbox(self.ingest_areas[ia])), self.ingest_areas), None)
+        ingest_area = next(filter(lambda ia: is_sub_path_of(abs_target, expand_path(self.ingest_areas[ia]['inbox'])),
+                                  self.ingest_areas), None)
         if ingest_area is None:
             print(
                 f"ERROR: target {target} does not seem to be in one of the inboxes of the ingest areas: {ingest_area}")
