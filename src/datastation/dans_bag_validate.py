@@ -30,7 +30,6 @@ def main():
                         help=f'Which information package type to validate this bag as (default: '
                              f'{default_information_package_type})',
                         choices=['DEPOSIT', 'MIGRATION'],
-                        required=True,
                         default=default_information_package_type)
     parser.add_argument('-f', '--format', dest='format',
                         help='Output format, one of: csv, json, yaml (default: json)')
