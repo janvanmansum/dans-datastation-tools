@@ -11,7 +11,11 @@ from datastation.common.utils import has_file_pred, has_dirtree_pred, is_sub_pat
 
 
 def is_deposit(path):
-    return os.path.exists(os.path.join(path, 'deposit.properties'))
+    if os.path.exists(os.path.join(path, 'deposit.properties')):
+        return True
+    else:
+        logging.error(f'ERROR: {path} is not a deposit')
+        return False
 
 
 def is_file_writeable_to_group(f):
