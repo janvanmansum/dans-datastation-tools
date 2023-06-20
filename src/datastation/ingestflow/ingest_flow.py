@@ -2,11 +2,12 @@ import json
 import logging
 import os
 import shutil
+from pathlib import Path
 
 import requests
 
 from datastation.common.utils import has_file_pred, has_dirtree_pred, is_sub_path_of, get_size, sizeof_fmt, \
-    set_permissions
+    set_permissions, expand_path
 
 
 def is_deposit(path):
@@ -22,6 +23,9 @@ class IngestFlow:
     def __init__(self, config, dry_run: bool = False):
         self.service_baseurl = config['service_baseurl']
         self.ingest_areas = config['ingest_areas']
+        self.deposits_file_mode = config['deposits_mode']['file']
+        self.deposits_dir_mode = config['deposits_mode']['directory']
+        self.deposits_group = config['deposits_group']
         self.dry_run = dry_run
 
     def set_dry_run(self, dry_run: bool):
@@ -149,16 +153,16 @@ class IngestFlow:
         After copying, the mode of the copied files and directories will be set to the value configured in the ingest
         area."""
 
-        abs_source = os.path.abspath(source)
-        abs_target = os.path.abspath(target)
+        def get_inbox(ingest_area):
+            return expand_path(ingest_area['inbox'])
+
+        abs_source = expand_path(source)
+        abs_target = expand_path(target)
         if not os.path.isdir(abs_source):
-            print("ERROR: source {source} is not a directory")
-            return 1
-        if not os.path.isdir(abs_target):
-            print("ERROR: target {target} is not a directory")
+            print(f"ERROR: source {source} is not a directory")
             return 1
 
-        ingest_area = next(filter(lambda ia: is_sub_path_of(abs_target, ia['inbox']), self.ingest_areas), None)
+        ingest_area = next(filter(lambda ia: is_sub_path_of(abs_target, get_inbox(self.ingest_areas[ia])), self.ingest_areas), None)
         if ingest_area is None:
             print(
                 f"ERROR: target {target} does not seem to be in one of the inboxes of the ingest areas: {ingest_area}")
@@ -179,5 +183,5 @@ class IngestFlow:
             shutil.copytree(abs_source, target_dir)
 
         print("Setting mode and group of copied files and directories...")
-        set_permissions(target_dir, file_mode=ingest_area['deposits_mode']['file'],
-                        dir_mode=ingest_area['deposits_mode']['directory'], group=ingest_area['deposits_group'])
+        set_permissions(target_dir, file_mode=self.deposits_file_mode,
+                        dir_mode=self.deposits_dir_mode, group=self.deposits_group)
