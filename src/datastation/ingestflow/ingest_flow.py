@@ -7,7 +7,7 @@ from pathlib import Path
 import requests
 
 from datastation.common.utils import has_file_pred, has_dirtree_pred, is_sub_path_of, get_size, sizeof_fmt, \
-    set_permissions, expand_path
+    set_permissions, expand_path, have_subdirs_pred
 
 
 def is_deposit(path):
@@ -41,7 +41,7 @@ class IngestFlow:
                 print('ERROR: %s is not a deposit' % deposit_path)
                 return
         else:
-            if not has_dirtree_pred(deposit_path, is_deposit):
+            if not have_subdirs_pred(deposit_path, is_deposit):
                 print('ERROR: %s is not a batch of deposits' % deposit_path)
                 return
 

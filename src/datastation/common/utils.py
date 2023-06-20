@@ -63,7 +63,17 @@ def has_dirtree_pred(path, pred):
     Returns True if all files and directories in the directory tree rooted at path satisfy the predicate pred.
     """
     for root, dirs, files in os.walk(path):
-        return all(pred(os.path.join(root, d)) for d in dirs) and all(pred(os.path.join(root, f)) for f in files)
+        return pred(root) \
+            and all(pred(os.path.join(root, d)) for d in dirs) \
+            and all(pred(os.path.join(root, f)) for f in files)
+
+
+def have_subdirs_pred(path, pred):
+    """
+    Returns True if all subdirectories in the directory tree rooted at path satisfy the predicate pred.
+    """
+    for root, dirs, files in os.walk(path):
+        return all(pred(os.path.join(root, d)) for d in dirs)
 
 
 def set_permissions(path, dir_mode, file_mode, group):
