@@ -37,16 +37,18 @@ class IngestFlow:
         self.dry_run = dry_run
 
     def start_ingest(self, deposit_path, is_single_deposit, continue_previous, is_migration):
+        abs_deposit_path = expand_path(deposit_path)
+
         if is_single_deposit:
-            if not has_file_pred(deposit_path, is_deposit):
+            if not has_file_pred(abs_deposit_path, is_deposit):
                 print('ERROR: %s is not a deposit' % deposit_path)
                 return
         else:
-            if not have_subdirs_pred(deposit_path, is_deposit):
+            if not have_subdirs_pred(abs_deposit_path, is_deposit):
                 print('ERROR: %s is not a batch of deposits' % deposit_path)
                 return
 
-        if not has_dirtree_pred(deposit_path, is_file_writeable_to_group):
+        if not has_dirtree_pred(abs_deposit_path, is_file_writeable_to_group):
             chmod_command = 'chmod -R g+w %s' % deposit_path
             print(f'Some files in the import batch do not give the owner group write permissions. '
                   f'Executing "{chmod_command}" to fix it')
@@ -57,7 +59,7 @@ class IngestFlow:
                 return
 
         command = {
-            'inputPath': deposit_path,
+            'inputPath': abs_deposit_path,
             'batch': not is_single_deposit,
             'continue': continue_previous
         }
