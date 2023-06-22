@@ -4,6 +4,8 @@ from datastation.dataverse.builtin_users import BuiltInUsersApi
 from datastation.dataverse.file_api import FileApi
 from datastation.dataverse.dataset_api import DatasetApi
 from datastation.dataverse.dataverse_api import DataverseApi
+from datastation.dataverse.dataverse_api import DataverseApi
+from datastation.dataverse.metrics_api import MetricsApi
 
 
 class DataverseClient:
@@ -33,3 +35,6 @@ class DataverseClient:
 
     def database(self):
         return Database(self.db_config)
+
+    def metrics(self):
+        return MetricsApi(self.server_url)

@@ -1,5 +1,6 @@
 import requests
 
+
 from datastation.common.utils import print_dry_run_message
 
 
@@ -57,9 +58,9 @@ class DataverseApi:
             current_page += per_page
             params["start"] = str(current_page)
 
-    def get_contents(self, dry_run=False):
+    def get_contents(self, alias="root", dry_run=False):
         headers = {"X-Dataverse-key": self.api_token}
-        url = f"{self.server_url}/api/dataverses/root/contents"
+        url = f"{self.server_url}/api/dataverses/{alias}/contents"
 
         if dry_run:
             print_dry_run_message(method="GET", url=url, headers=headers)
@@ -70,3 +71,15 @@ class DataverseApi:
 
         resp_data = dv_resp.json()["data"]
         return resp_data
+
+    def get_storage_size(self, alias="root", dry_run=False):
+        """ Get dataverse storage size (bytes). """
+        url = f'{self.server_url}/api/dataverses/{alias}/storagesize'
+        headers = {'X-Dataverse-key': self.api_token}
+        if dry_run:
+            print_dry_run_message(method='GET', url=url, headers=headers)
+            return None
+        else:
+            r = requests.get(url, headers=headers)
+        r.raise_for_status()
+        return r.json()['data']['message']
