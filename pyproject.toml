@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dans-datastation-tools"
-version = "0.34.0"
+version = "0.35.0"
 description = "Command line utilities for Data Station application management"
 authors = ["DANS-KNAW"]
 packages = [
@@ -49,3 +49,4 @@ dv-user-import = "datastation.dv_user_import:main"
 dv-notifications-cleanup="datastation.dv_notifications_cleanup:main"
 ingest-flow = "datastation.ingest_flow:main"
 dv-dataverse-root-collect-storage-usage = "datastation.dv_dataverse_root_collect_storage_usage:main"
+datastation-module-versions = "datastation.datastation_module_versions:main"
