@@ -25,7 +25,7 @@ def test_no_matching_modules_found():
         assert versions == {}
 
 
-def test_get_dataset_version():
+def test_get_dataverse_version():
     with patch('builtins.open') as mock_open:
         mock_open.return_value.__enter__.return_value = ['dataverse.version=5.0.1\n']
         version = get_dataverse_version('/opt/dv/application')
