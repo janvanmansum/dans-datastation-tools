@@ -7,6 +7,7 @@ def rpm_qa():
 
 
 evr_pattern = r'(?P<name>.*?)-(?P<version>\d+\.\d+\.\d+)-(?P<release>\d+)'
+payara_version_pattern = r'Thank you for downloading Payara Server (.*).'
 
 
 def get_rpm_versions(prefix):
@@ -38,8 +39,9 @@ def get_dataverse_build_number(dataverse_application_path):
 
 
 def get_payara_version(payara_application_path):
-    with open(os.path.join(payara_application_path, 'glassfish', 'modules', 'org', 'glassfish', 'main',
-                           'glassfish-api.jar'), 'r') as f:
-        for line in f:
-            if 'Implementation-Version' in line:
-                return line.split(' ')[1].strip()
+    with open(os.path.join(payara_application_path, 'README.txt'), 'r') as f:
+        # Find first line that matches pattern
+        line = next((line for line in f if match(payara_version_pattern, line)), None)
+        # get subgroup 1 of the match
+        payara_version = match(payara_version_pattern, line).group(1)
+    return payara_version
