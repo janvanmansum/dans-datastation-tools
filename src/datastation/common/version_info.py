@@ -27,14 +27,14 @@ def get_dataverse_version(dataverse_application_path):
                            'microprofile-config.properties'), 'r') as f:
         for line in f:
             if 'dataverse.version' in line:
-                return line.split('"')[1]
+                return (line.split('=')[1]).strip()
 
 
 def get_dataverse_build_number(dataverse_application_path):
     with open(os.path.join(dataverse_application_path, 'WEB-INF', 'classes', 'BuildNumber.properties'), 'r') as f:
         for line in f:
             if 'build.number' in line:
-                return line.split('"')[1]
+                return (line.split('=')[1]).strip()
 
 
 def get_payara_version(payara_application_path):
