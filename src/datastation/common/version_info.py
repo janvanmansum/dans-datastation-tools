@@ -30,7 +30,7 @@ def get_dataverse_version(dataverse_application_path):
                 return line.split('"')[1]
 
 
-def get_build_number(dataverse_application_path):
+def get_dataverse_build_number(dataverse_application_path):
     with open(os.path.join(dataverse_application_path, 'WEB-INF', 'classes', 'BuildNumber.properties'), 'r') as f:
         for line in f:
             if 'build.number' in line:
@@ -38,7 +38,8 @@ def get_build_number(dataverse_application_path):
 
 
 def get_payara_version(payara_application_path):
-    with open(os.path.join(payara_application_path, 'glassfish', 'modules', 'org', 'glassfish', 'main', 'glassfish-api.jar'), 'r') as f:
+    with open(os.path.join(payara_application_path, 'glassfish', 'modules', 'org', 'glassfish', 'main',
+                           'glassfish-api.jar'), 'r') as f:
         for line in f:
             if 'Implementation-Version' in line:
                 return line.split(' ')[1].strip()
