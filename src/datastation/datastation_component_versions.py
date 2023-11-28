@@ -11,7 +11,7 @@ def main():
     components = get_rpm_versions(config['version_info']['dans_rpm_module_prefix'])
     dataverse_version = get_dataverse_version(config['version_info']['dataverse_application_path'])
     dataverse_build_number = get_dataverse_build_number(config['version_info']['dataverse_application_path'])
-    components['dataverse'] = dataverse_version
+    components['dataverse'] = f'{dataverse_version} build {dataverse_build_number}'
     payara_version = get_payara_version(config['version_info']['payara_install_path'])
     components['payara'] = payara_version
     table = Table(title="Data Station Component Versions")
