@@ -1,4 +1,4 @@
-from rich import Console
+from rich.console import Console
 from rich.table import Table
 
 from datastation.common.config import init
