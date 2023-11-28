@@ -1,5 +1,6 @@
 import argparse
 
+import rich
 from rich.console import Console
 from rich.table import Table
 
@@ -24,7 +25,7 @@ def main():
     components['payara'] = payara_version
 
     if args.json:
-        print(components)
+        rich.print(components)
         return
     else:
         table = Table(title="Data Station Component Versions")
