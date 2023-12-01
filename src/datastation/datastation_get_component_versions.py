@@ -1,5 +1,7 @@
 import argparse
 
+import yaml
+import sys
 import rich
 from rich.console import Console
 from rich.table import Table
@@ -20,7 +22,7 @@ def get_config_version_info(config):
         }
         rich.print('WARNING: No version_info section in config file. Using default values.')
         rich.print('To get rid of this warning, add a version_info section to your config file:')
-        rich.print(default_version_info);
+        yaml.dump({'version_info': default_version_info}, sys.stdout)
         return default_version_info
 
 
@@ -38,7 +40,7 @@ def main():
     dataverse_version = get_dataverse_version(version_info['dataverse_application_path'])
     dataverse_build_number = get_dataverse_build_number(version_info['dataverse_application_path'])
     components['dataverse'] = f'{dataverse_version} build {dataverse_build_number}'
-    payara_version = get_payara_version(config['version_info']['payara_install_path'])
+    payara_version = get_payara_version(version_info['payara_install_path'])
     components['payara'] = payara_version
 
     if args.json:
@@ -48,9 +50,11 @@ def main():
         table = Table(title="Data Station Component Versions")
         table.add_column("Component")
         table.add_column("Version")
-        components.sort()
-        for component in components:
-            table.add_row(component, components[component])
+        # Get a sorted list of keys into the components dictionary
+        keys = list(components.keys())
+        keys.sort()
+        for key in keys:
+            table.add_row(key, components[key])
         console = Console()
         console.print(table)
 
