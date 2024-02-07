@@ -23,6 +23,48 @@ class DataverseApi:
         resp_data = dv_resp.json()["data"]
         return resp_data
 
+    def get_roles(self, alias="root", dry_run=False):
+        headers = {"X-Dataverse-key": self.api_token}
+        url = f"{self.server_url}/api/dataverses/{alias}/roles"
+
+        if dry_run:
+            print_dry_run_message(method="GET", url=url, headers=headers)
+            return None
+
+        dv_resp = requests.get(url, headers=headers)
+        dv_resp.raise_for_status()
+
+        resp_data = dv_resp.json()["data"]
+        return resp_data
+
+    def get_assignments(self, alias="root", dry_run=False):
+        headers = {"X-Dataverse-key": self.api_token}
+        url = f"{self.server_url}/api/dataverses/{alias}/assignments"
+
+        if dry_run:
+            print_dry_run_message(method="GET", url=url, headers=headers)
+            return None
+
+        dv_resp = requests.get(url, headers=headers)
+        dv_resp.raise_for_status()
+
+        resp_data = dv_resp.json()["data"]
+        return resp_data
+
+    def get_groups(self, alias="root", dry_run=False):
+        headers = {"X-Dataverse-key": self.api_token}
+        url = f"{self.server_url}/api/dataverses/{alias}/groups"
+
+        if dry_run:
+            print_dry_run_message(method="GET", url=url, headers=headers)
+            return None
+
+        dv_resp = requests.get(url, headers=headers)
+        dv_resp.raise_for_status()
+
+        resp_data = dv_resp.json()["data"]
+        return resp_data
+
     def get_storage_size(self, alias="root", dry_run=False):
         """ Get dataverse storage size (bytes). """
         url = f'{self.server_url}/api/dataverses/{alias}/storagesize'
