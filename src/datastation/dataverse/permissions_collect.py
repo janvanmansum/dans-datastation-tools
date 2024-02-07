@@ -69,18 +69,6 @@ class PermissionsCollect:
             result_list.append(assignment['assignee'] + ' (' + (assignment['_roleAlias']) + ')')
         return ', '.join(result_list)
 
-    # Traverses the tree and collects permissions info for each dataverse using recursion.
-    # def collect_children_permissions_info(self, parent_data, parent_vpath, depth=1):
-    #     parent_alias = parent_data['alias']
-    #     # Only direct descendants (children)
-    #     if 'children' in parent_data:
-    #         for child_data in parent_data['children']:
-    #             vpath = parent_vpath + self.vpath_delimiter + child_data['alias']
-    #             row = self.get_result_row(parent_alias, child_data['alias'], child_data['name'], child_data['id'],
-    #                                       vpath, depth)
-    #             self.write_result_row(row)
-    #             self.collect_children_permissions_info(child_data, vpath, depth + 1)  # Recurse
-
     def collect_permissions_info(self, tree_data, parent_vpath, parent_alias, depth=1):
         alias = tree_data['alias']
         name = tree_data['name']
