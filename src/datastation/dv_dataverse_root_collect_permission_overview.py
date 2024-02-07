@@ -32,13 +32,15 @@ def main():
                         help='The file to write the output to or - for stdout')
     parser.add_argument('-f', '--format', dest='format',
                         help='Output format, one of: csv, json (default: json)')
-
+    parser.add_argument('-s', '--selected-dataverse', dest='selected_dataverse', default=None,
+                        help='The dataverse (top-level) sub-tree to collect the permissions for, by default all dataverses are collected')
     add_dry_run_arg(parser)
     args = parser.parse_args()
 
+    selected_dataverse = args.selected_dataverse
     dataverse_client = DataverseClient(config['dataverse'])
     collector = PermissionsCollect(dataverse_client, args.output_file, args.format, args.dry_run)
-    collector.collect_permissions_info()
+    collector.collect_permissions_info_overview(selected_dataverse)
 
 if __name__ == '__main__':
     main()

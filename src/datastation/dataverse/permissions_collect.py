@@ -70,18 +70,38 @@ class PermissionsCollect:
         return ', '.join(result_list)
 
     # Traverses the tree and collects permissions info for each dataverse using recursion.
-    def collect_children_permissions_info(self, parent_data, parent_vpath, depth=1):
-        parent_alias = parent_data['alias']
-        # Only direct descendants (children)
-        if 'children' in parent_data:
-            for child_data in parent_data['children']:
-                vpath = parent_vpath + self.vpath_delimiter + child_data['alias']
-                row = self.get_result_row(parent_alias, child_data['alias'], child_data['name'], child_data['id'],
-                                          vpath, depth)
-                self.write_result_row(row)
-                self.collect_children_permissions_info(child_data, vpath, depth + 1)  # Recurse
+    # def collect_children_permissions_info(self, parent_data, parent_vpath, depth=1):
+    #     parent_alias = parent_data['alias']
+    #     # Only direct descendants (children)
+    #     if 'children' in parent_data:
+    #         for child_data in parent_data['children']:
+    #             vpath = parent_vpath + self.vpath_delimiter + child_data['alias']
+    #             row = self.get_result_row(parent_alias, child_data['alias'], child_data['name'], child_data['id'],
+    #                                       vpath, depth)
+    #             self.write_result_row(row)
+    #             self.collect_children_permissions_info(child_data, vpath, depth + 1)  # Recurse
 
-    def collect_permissions_info(self):
+    def collect_permissions_info(self, tree_data, parent_vpath, parent_alias, depth=1):
+        alias = tree_data['alias']
+        name = tree_data['name']
+        id = tree_data['id']
+        vpath = parent_vpath + self.vpath_delimiter + alias
+        row = self.get_result_row(parent_alias, alias, name, id, vpath, depth)
+        self.write_result_row(row)
+        # only direct descendants (children)
+        if 'children' in tree_data:
+            for child_tree_data in tree_data['children']:
+                self.collect_permissions_info(child_tree_data, vpath, alias, depth + 1)  # recurse
+
+    def find_child(self, parent, alias):
+        result = None
+        for child in parent['children']:
+            if child["alias"] == alias:
+                result = child
+                break
+        return result
+
+    def collect_permissions_info_overview(self, selected_dataverse=None):
         out_stream = sys.stdout
         if self.output_file != '-':
             try:
@@ -99,11 +119,23 @@ class PermissionsCollect:
         id = tree_data['id']
         vpath = alias
         logging.info(f'Extracted the tree for the toplevel dataverse: {name} ({alias})')
-
         logging.info("Retrieving the info for this dataverse instance...")
-        row = self.get_result_row("-", alias, name, id, vpath, 0)  # The root has no parent
-        self.write_result_row(row)
 
-        self.collect_children_permissions_info(tree_data, vpath, 1)
+        if selected_dataverse is None:
+            # do whole tree
+            logging.info("Retrieving the info for all the dataverse collections...")
+            self.collect_permissions_info(tree_data, vpath, alias, 1)
+        else:
+            # always the 'root' dataverse
+            row = self.get_result_row("-", alias, name, id, vpath, 0)  # The root has no parent
+            self.write_result_row(row)
+            # then the selected sub-verse tree
+            logging.info("Retrieving the info for a selected dataverse collection sub-tree...")
+            selected_tree_data = self.find_child(tree_data, selected_dataverse)
+            if selected_tree_data is not None:
+                self.collect_permissions_info(selected_tree_data, vpath, alias, 1)
+            else:
+                logging.error(f"Could not find the selected dataverse: {selected_dataverse}")
+
         self.writer.close()
         self.is_first = True
