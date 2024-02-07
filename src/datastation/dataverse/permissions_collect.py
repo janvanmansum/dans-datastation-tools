@@ -22,7 +22,7 @@ class PermissionsCollect:
 
     def create_result_writer(self, out_stream):
         logging.info(f'Writing output: {self.output_file}, with format : {self.output_format}')
-        csv_columns = ['depth', 'parentalias', 'alias', 'name', 'groups', 'roles', 'assignments']
+        csv_columns = ['depth', 'parentalias', 'alias', 'name', 'id', 'groups', 'roles', 'assignments']
         if self.output_format == 'csv':
             return CsvResultWriter(headers=csv_columns, out_stream=out_stream)
         else:
@@ -32,13 +32,13 @@ class PermissionsCollect:
         self.writer.write(row, self.is_first)
         self.is_first = False  # Only the first time it can be True
 
-    def get_result_row(self, parent_alias, child_alias, child_name, depth):
+    def get_result_row(self, parent_alias, child_alias, child_name, id, depth):
         logging.info(f'Retrieving permission info for dataverse: {parent_alias} / {child_alias} ...')
         group_info = self.get_group_info(child_alias)
         role_info = self.get_role_info(child_alias)
         assignment_info = self.get_assignment_info(child_alias)
         row = {'depth': depth, 'parentalias': parent_alias, 'alias': child_alias, 'name': child_name,
-               'groups': group_info, 'roles': role_info, 'assignments': assignment_info}
+               'id': id, 'groups': group_info, 'roles': role_info, 'assignments': assignment_info}
         return row
 
     def get_group_info(self, alias):
@@ -68,14 +68,14 @@ class PermissionsCollect:
             result_list.append(assignment['assignee'] + ' (' + (assignment['_roleAlias']) + ')')
         return ', '.join(result_list)
 
-
     # Traverses the tree and collects permissions info for each dataverse using recursion.
     def collect_children_permissions_info(self, parent_data, depth=1):
         parent_alias = parent_data['alias']
         # Only direct descendants (children)
         if 'children' in parent_data:
             for child_data in parent_data['children']:
-                row = self.get_result_row(parent_alias, child_data['alias'], child_data['name'], depth)
+                row = self.get_result_row(parent_alias, child_data['alias'], child_data['name'], child_data['id'],
+                                          depth)
                 self.write_result_row(row)
                 self.collect_children_permissions_info(child_data, depth + 1)  # Recurse
 
@@ -94,10 +94,11 @@ class PermissionsCollect:
         tree_data = self.dataverse_client.metrics().get_tree()
         alias = tree_data['alias']
         name = tree_data['name']
+        id = tree_data['id']
         logging.info(f'Extracted the tree for the toplevel dataverse: {name} ({alias})')
 
         logging.info("Retrieving the info for this dataverse instance...")
-        row = self.get_result_row("-", alias, name, 0)  # The root has no parent
+        row = self.get_result_row("-", alias, name, id, 0)  # The root has no parent
         self.write_result_row(row)
 
         self.collect_children_permissions_info(tree_data, 1)
