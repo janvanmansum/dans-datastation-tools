@@ -12,9 +12,10 @@ def description_object_matches(description_text_pattern):
 
     return matches
 
+
 def is_migration_file(file_metadata):
     return ('directoryLabel' in file_metadata and file_metadata['directoryLabel'] == 'easy-migration') or \
-        ('directoryLabel' not in file_metadata and file_metadata['label'] != 'easy-migration.zip')
+        ('directoryLabel' not in file_metadata and file_metadata['label'] == 'easy-migration.zip')
 
 
 def destroy_placeholder_dataset(dataset_api: DatasetApi, description_text_pattern, csv_report: CsvReport,
@@ -50,7 +51,7 @@ def destroy_placeholder_dataset(dataset_api: DatasetApi, description_text_patter
 
         if len(non_easy_migration_files) > 0:
             blocker = True
-            messages.append(f"Files other than 'easy-migration' found: {len(non_easy_migration_files)}: BLOCKER")
+            messages.append(f"Files other than 'easy-migration/*' or 'easy-migration.zip' found: {len(non_easy_migration_files)}: BLOCKER")
         else:
             messages.append("Only found easy-migration files: OK")
 
